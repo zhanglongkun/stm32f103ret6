@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>LED</TargetName>
+      <TargetName>stm32f103ret6</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>

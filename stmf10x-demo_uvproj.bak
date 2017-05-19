@@ -76,7 +76,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>D:\keil5 MDK\ARM\ARMCC\bin\fromelf.exe --bin -o .\output\stm32f103.bin .\output\stmf10x-demo.axf</UserProg1Name>
             <UserProg2Name></UserProg2Name>
