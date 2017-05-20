@@ -4,6 +4,9 @@
 //硬件驱动
 #include "delay.h"
 #include "led.h"
+#include "key.h"
+#include "usart.h"
+#include "exti.h"
 
 
 void Hardware_Init(void)
@@ -13,6 +16,10 @@ void Hardware_Init(void)
     Delay_Init();										//Systick初始化，用于普通的延时
 
     Led_Init();											//LED接口初始化
+
+    Key_Init();
+    
+    Exti_PC11_Config();
 }
 
 
