@@ -9,6 +9,7 @@
 #include "exti.h"
 #include "sht20.h"
 #include "i2c.h"
+#include "adxl345.h"
 
 
 void Hardware_Init(void)
@@ -22,15 +23,19 @@ void Hardware_Init(void)
     Key_Init();
     
     Exti_PC11_Config();
+    
     Usart1_Init(115200);
     
     IIC_Init();
+
+    ADXL345_Init();
 }
 
 
 int main(void)
 {
     SHT20_INFO sht20;
+    ADXL345_INFO adxl345;
     
     Hardware_Init();											//Ó²¼þ³õÊ¼»¯
     
@@ -38,6 +43,10 @@ int main(void)
     
     SHT20_GetValue(&sht20);
     UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
+
+    ADXL345_GetValue(&adxl345);
+    UsartPrintf(USART1, "x = %0.1f, y = %0.1f, z = %0.1f\r\n",
+                adxl345.incidence_Xf, adxl345.incidence_Yf, adxl345.incidence_Zf);
 
     DelayXms(2000);
     

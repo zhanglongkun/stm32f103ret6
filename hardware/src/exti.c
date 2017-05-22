@@ -34,6 +34,8 @@ void Exti_PC11_Config(void)
     extiInit.EXTI_Mode = EXTI_Mode_Interrupt;
     extiInit.EXTI_Trigger = EXTI_Trigger_Falling;  //ÏÂ½µÑØÖÐ¶Ï
     extiInit.EXTI_LineCmd = ENABLE;
+
+    EXTI_Init(&extiInit);
 }
 
 
