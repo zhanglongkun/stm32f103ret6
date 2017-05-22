@@ -16,6 +16,7 @@
 //C¿â
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
 
 
 /**
