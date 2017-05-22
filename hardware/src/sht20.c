@@ -19,11 +19,29 @@ const int16_t POLYNOMIAL = 0x131;
 
 
 
+/**
+  ******************************************************************************
+  * Function:     SHT20_Reset()
+  * Description:  复位
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void SHT20_Reset(void)
 {
     I2C_WriteByte(SHT20_ADDRESS, SHT20_SOFT_RESET, (void *)0);
 }
 
+/**
+  ******************************************************************************
+  * Function:     SHT20_read_user_reg()
+  * Description:  SHT20读取用户寄存器
+  * Parameter:    void
+  * Return:       读取到的用户寄存器的值
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 unsigned char  SHT20_read_user_reg(void)
 {
     unsigned char val = 0;
@@ -33,6 +51,17 @@ unsigned char  SHT20_read_user_reg(void)
     return val;
 }
 
+/**
+  ******************************************************************************
+  * Function:     SHT2x_CheckCrc()
+  * Description:  检查数据正确性
+  * Parameter:    data：读取到的数据
+                  nbrOfBytes：需要校验的数量
+                  checksum：读取到的校对比验值
+  * Return:       0 --成功，1 --失败
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 char SHT2x_CheckCrc(char data[], char nbrOfBytes, char checksum)
 {
     char crc = 0;
@@ -55,6 +84,15 @@ char SHT2x_CheckCrc(char data[], char nbrOfBytes, char checksum)
         return 0;
 }
 
+/**
+  ******************************************************************************
+  * Function:     SHT2x_CalcTemperatureC()
+  * Description:  温度计算
+  * Parameter:    u16sT：读取到的温度原始数据
+  * Return:       计算后的温度数据
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 float SHT2x_CalcTemperatureC(unsigned short u16sT)
 {
     float temperatureC = 0;            // variable for result
@@ -66,6 +104,15 @@ float SHT2x_CalcTemperatureC(unsigned short u16sT)
     return temperatureC;
 }
 
+/**
+  ******************************************************************************
+  * Function:     SHT2x_CalcRH()
+  * Description:  湿度计算
+  * Parameter:    u16sRH：读取到的湿度原始数据
+  * Return:       计算后的湿度数据
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 float SHT2x_CalcRH(unsigned short u16sRH)
 {
     float humidityRH = 0;              // variable for result
@@ -78,6 +125,16 @@ float SHT2x_CalcRH(unsigned short u16sRH)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     SHT2x_MeasureHM()
+  * Description:  测量温湿度
+  * Parameter:    cmd：测量温度还是湿度
+                  pMeasurand：不为空则保存为ushort值到此地址
+  * Return:       测量结果
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 float SHT2x_MeasureHM(unsigned char cmd, unsigned short *pMeasurand)
 {
     char  checksum = 0;  //checksum
@@ -135,6 +192,15 @@ float SHT2x_MeasureHM(unsigned char cmd, unsigned short *pMeasurand)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     SHT20_GetValue()
+  * Description:  获取温湿度数据
+  * Parameter:    info --温湿度结构体指针
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void SHT20_GetValue(SHT20_INFO *info)
 {
     unsigned char val = 0;

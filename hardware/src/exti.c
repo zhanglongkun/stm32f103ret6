@@ -10,6 +10,15 @@
 
 #include "stm32f10x.h"
 
+/**
+  ******************************************************************************
+  * Function:     Exti_PC11_Config()
+  * Description:  初始化 GPIOC 的 GPIO_Pin_11
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Exti_PC11_Config(void)
 {
     GPIO_InitTypeDef gpioInit;
@@ -39,11 +48,20 @@ void Exti_PC11_Config(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     EXTI9_5_IRQHandler()
+  * Description:  9 - 15 号中断
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void EXTI9_5_IRQHandler(void)
 {
     //确保是否产生了 EXTI Line中断
     if(EXTI_GetITStatus(EXTI_Line11) != RESET) {
-        // LED1 取反
+        // LED6 取反
         GPIO_WriteBit(GPIOA, GPIO_Pin_12, (BitAction)((1 - GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_3))));
         
         EXTI_ClearITPendingBit(EXTI_Line5); //清除中断标志位

@@ -1,3 +1,14 @@
+/**
+  ******************************************************************************
+  * @FileName:     led.c
+  * @Author:       zlk
+  * @Version:      V1.0
+  * @Date:         2017-5-22 10:58:40
+  * @Description:  This file provides all the led.c functions. 
+  ******************************************************************************
+  */ 
+
+
 //单片机头文件
 #include "stm32f10x.h"
 
@@ -8,6 +19,15 @@
 
 LED_STATUS ledStatus;
 
+/**
+  ******************************************************************************
+  * Function:     Led_Init()
+  * Description:  初始化 LED
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Led_Init(void)
 {
     GPIO_InitTypeDef gpioInitStrcut;
@@ -57,6 +77,15 @@ void Led7_Set(LED_ENUM status)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     WaterLights()
+  * Description:  流水灯，循环1000次
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void WaterLights(void)
 {
     int i;

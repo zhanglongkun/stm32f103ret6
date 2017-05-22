@@ -41,7 +41,7 @@ typedef struct
 
 void ADXL345_Init(void);
 
-void ADXL345_GetValue(ADXL345_INFO *info);
+int ADXL345_GetValue(ADXL345_INFO *info);
 
 
 #endif  /* _ADXL345_H_ */

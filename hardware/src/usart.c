@@ -18,6 +18,15 @@
 #include <string.h>
 
 
+/**
+  ******************************************************************************
+  * Function:     Usart1_Init()
+  * Description:  初始化 UASRT1
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Usart1_Init(unsigned int baud)
 {
     GPIO_InitTypeDef gpioInitStruct;
@@ -59,6 +68,15 @@ void Usart1_Init(unsigned int baud)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     Usart2_Init()
+  * Description:  初始化 USART2
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Usart2_Init(unsigned int baud)
 {
     GPIO_InitTypeDef gpioInitStruct;
@@ -100,6 +118,15 @@ void Usart2_Init(unsigned int baud)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     Usart_SendString()
+  * Description:  发送数据
+  * Parameter:    USARTx --串口号， str --字符串，len --发送个数
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short len)
 {
     unsigned short count = 0;
@@ -112,6 +139,15 @@ void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short 
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     UsartPrintf()
+  * Description:  串口打印
+  * Parameter:    USARTx --串口号
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...)
 {
     unsigned char UsartPrintfBuf[296];

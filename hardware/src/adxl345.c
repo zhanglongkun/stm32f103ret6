@@ -20,6 +20,15 @@
 #include "delay.h"
 
 
+/**
+  ******************************************************************************
+  * Function:     ADXL345_Init()
+  * Description:  初始化 ADXL345
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void ADXL345_Init(void)
 {
     unsigned char devid = 0, val = 0;
@@ -57,8 +66,18 @@ void ADXL345_Init(void)
 }
 
 
-void ADXL345_GetValue(ADXL345_INFO *info)
+/**
+  ******************************************************************************
+  * Function:     ADXL345_GetValue()
+  * Description:  读取三轴加速度值
+  * Parameter:    info --ADXL345结构体
+  * Return:       -1 --读取失败，0 --读取成功
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
+int ADXL345_GetValue(ADXL345_INFO *info)
 {
+    int ret;
     unsigned char devid = 0;
     unsigned char dataTemp[6];
     ADXL345_INFO adxlInfo;
@@ -66,10 +85,16 @@ void ADXL345_GetValue(ADXL345_INFO *info)
     IIC_SpeedCtl(5);													//控制IIC速度
 
     DelayUs(200);
-    I2C_ReadByte(ADXL345_ADDRESS, 0x00, &devid);						//读ID	且每次读写之前都需要读ID
+    ret = I2C_ReadByte(ADXL345_ADDRESS, 0x00, &devid);						//读ID	且每次读写之前都需要读ID
+    if (0 != ret) {
+        return -1;
+    }
     DelayUs(200);
 
-    I2C_ReadBytes(ADXL345_ADDRESS, 0x32, dataTemp, 6);					//读取原始加速值(4mg/LSB)
+    ret = I2C_ReadBytes(ADXL345_ADDRESS, 0x32, dataTemp, 6);					//读取原始加速值(4mg/LSB)
+    if (0 != ret) {
+        return -1;
+    }
 
     adxlInfo.incidence_X = (short)(dataTemp[0] + ((unsigned short)dataTemp[1] << 8));
     adxlInfo.incidence_Y = (short)(dataTemp[2] + ((unsigned short)dataTemp[3] << 8));
@@ -80,4 +105,6 @@ void ADXL345_GetValue(ADXL345_INFO *info)
     adxlInfo.incidence_Zf = (float)adxlInfo.incidence_Z * 0.0039;		//有多少个LSB，就乘以0.0039g就得到了以g为单位的加速值
 
     memcpy(info, &adxlInfo, sizeof(ADXL345_INFO));
+
+    return 0;
 }

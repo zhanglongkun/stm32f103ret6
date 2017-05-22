@@ -21,11 +21,29 @@
 
 IIC_INFO iicInfo;
 
+/**
+  ******************************************************************************
+  * Function:     IIC_SpeedCtl()
+  * Description:  软件 IIC 速度控制
+  * Parameter:    speed --速度
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_SpeedCtl(unsigned short speed)
 {
     iicInfo.speed = speed;
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_Init()
+  * Description:  初始化 IIC 总线 IO
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_Init(void)
 {
     GPIO_InitTypeDef gpioInitStruct;
@@ -43,6 +61,15 @@ void IIC_Init(void)
     SCL_H;													//拉高SCL线，处于空闲状态
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_Start()
+  * Description:  软件 IIC 开始信号
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_Start(void)
 {
     SDA_H;						//拉高SDA线
@@ -54,6 +81,15 @@ void IIC_Start(void)
     SCL_L;						//钳住SCL线，以便发送数据
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_Stop()
+  * Description:  软件 IIC 停止信号
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_Stop(void)
 {
     SDA_L;						//拉低SDA线
@@ -65,6 +101,15 @@ void IIC_Stop(void)
     DelayUs(iicInfo.speed);
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_WaitAck()
+  * Description:  软件 IIC 等待应答
+  * Parameter:    参数
+  * Return:       返回值
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool IIC_WaitAck(unsigned int timeOut)
 {
     SDA_H;DelayUs(iicInfo.speed);			//拉高SDA线
@@ -89,6 +134,16 @@ _Bool IIC_WaitAck(unsigned int timeOut)
     return IIC_OK;							//返回成功
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_Ack()
+  * Description:  软件IIC产生一个应答
+                  当SDA线为低时，SCL线一个正脉冲代表发送一个应答信号
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_Ack(void)
 {
     SCL_L;						//拉低SCL线
@@ -99,6 +154,16 @@ void IIC_Ack(void)
     SCL_L;						//拉低SCL线
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_NAck()
+  * Description:  软件IIC产生一非个应答
+                  当SDA线为高时，SCL线一个正脉冲代表发送一个非应答信号
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_NAck(void)
 {
     SCL_L;						//拉低SCL线
@@ -109,6 +174,15 @@ void IIC_NAck(void)
     SCL_L;						//拉低SCL线
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_SendByte()
+  * Description:  软件IIC发送一个字节
+  * Parameter:    byte --发送的字节
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void IIC_SendByte(unsigned char byte)
 {
     unsigned char count = 0;
@@ -131,6 +205,15 @@ void IIC_SendByte(unsigned char byte)
     }
 }
 
+/**
+  ******************************************************************************
+  * Function:     IIC_RecvByte()
+  * Description:  软件IIC接收一个字节
+  * Parameter:    void
+  * Return:       接收到的字节数据
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 unsigned char IIC_RecvByte(void)
 {
     unsigned char count = 0, receive = 0;
@@ -154,6 +237,17 @@ unsigned char IIC_RecvByte(void)
     return receive;
 }
 
+/**
+  ******************************************************************************
+  * Function:     I2C_WriteByte()
+  * Description:  软件IIC写一个数据
+  * Parameter:    slaveAddr：从机地址
+                  regAddr：寄存器地址
+                  byte：需要写入的数据
+  * Return:       0 --写入成功, 1 --写入失败
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool I2C_WriteByte(unsigned char slaveAddr, unsigned char regAddr, unsigned char *byte)
 {
     unsigned char addr = 0;
@@ -182,6 +276,17 @@ _Bool I2C_WriteByte(unsigned char slaveAddr, unsigned char regAddr, unsigned cha
     return IIC_OK;
 }
 
+/**
+  ******************************************************************************
+  * Function:     I2C_ReadByte()
+  * Description:  软件IIC读取一个字节
+  * Parameter:    slaveAddr：从机地址
+                  regAddr：寄存器地址
+                  val：需要读取的数据缓存
+  * Return:       0 --成功, 1 --失败
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool I2C_ReadByte(unsigned char slaveAddr, unsigned char regAddr, unsigned char *val)
 {
     unsigned char addr = 0;
@@ -212,6 +317,18 @@ _Bool I2C_ReadByte(unsigned char slaveAddr, unsigned char regAddr, unsigned char
     return IIC_OK;
 }
 
+/**
+  ******************************************************************************
+  * Function:     I2C_WriteBytes()
+  * Description:  软件IIC写多个数据
+  * Parameter:    slaveAddr：从机地址
+                  regAddr：寄存器地址
+                  buf：需要写入的数据缓存
+                  num：数据长度
+  * Return:       返回值
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool I2C_WriteBytes(unsigned char slaveAddr, unsigned char regAddr, unsigned char *buf, unsigned char num)
 {
     unsigned char addr = 0;
@@ -244,6 +361,18 @@ _Bool I2C_WriteBytes(unsigned char slaveAddr, unsigned char regAddr, unsigned ch
     return IIC_OK;
 }
 
+/**
+  ******************************************************************************
+  * Function:     I2C_ReadBytes()
+  * Description:  软件IIC读多个数据
+  * Parameter:    slaveAddr：从机地址
+                  regAddr：寄存器地址
+                  buf：需要读取的数据缓存
+                  num：数据长度
+  * Return:       0-写入成功	1-写入失败
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool I2C_ReadBytes(unsigned char slaveAddr, unsigned char regAddr, unsigned char *buf, unsigned char num)
 {
     unsigned short addr = 0;

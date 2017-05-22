@@ -12,6 +12,15 @@
 #include "key.h"
 
 
+/**
+  ******************************************************************************
+  * Function:     Key_Init()
+  * Description:  初始化 KEY
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Key_Init(void)
 {
     GPIO_InitTypeDef gpioInit;
@@ -28,6 +37,15 @@ void Key_Init(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     KeyScan()
+  * Description:  判断按键是否按下
+  * Parameter:    GPIOX --gpio组，NUM --引脚号
+  * Return:       返回值
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 _Bool KeyScan(GPIO_TypeDef* GPIOX, unsigned int NUM)
 {
     if (GPIOC == GPIOX) {
@@ -47,6 +65,15 @@ _Bool KeyScan(GPIO_TypeDef* GPIOX, unsigned int NUM)
     return KEYUP;
 }
 
+/**
+  ******************************************************************************
+  * Function:     Keyboard()
+  * Description:  判断是哪个按键
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 unsigned char Keyboard(void)
 {
     if(KeyScan(GPIOC, KEY0) == KEYDOWN)
