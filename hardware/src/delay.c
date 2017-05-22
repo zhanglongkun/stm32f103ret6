@@ -1,3 +1,14 @@
+/**
+  ******************************************************************************
+  * @FileName:     delay.c
+  * @Author:       zlk
+  * @Version:      V1.0
+  * @Date:         2017-5-22 11:47:24
+  * @Description:  This file provides all the delay.c functions. 
+  ******************************************************************************
+  */ 
+
+
 
 //单片机头文件
 #include "stm32f10x.h"
@@ -12,6 +23,15 @@ unsigned char UsCount = 0;
 unsigned short MsCount = 0;
 
 
+/**
+  ******************************************************************************
+  * Function:     Delay_Init()
+  * Description:  时钟初始化，9M
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void Delay_Init(void)
 {
     SysTick->CTRL &= ~(1 << 2);		//选择时钟为HCLK(72MHz)/8		103--9MHz
@@ -22,6 +42,15 @@ void Delay_Init(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     DelayUs()
+  * Description:  微妙级延时
+  * Parameter:    us --延时数
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void DelayUs(unsigned short us)
 {
     unsigned int ctrlResult = 0;
@@ -43,6 +72,15 @@ void DelayUs(unsigned short us)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     DelayXms()
+  * Description:  微秒级延时
+  * Parameter:    ms --延时数
+  * Return:       void
+  * Others:       add by zlk, 2017-05-22
+  ******************************************************************************
+  */ 
 void DelayXms(unsigned short ms)
 {
     unsigned int ctrlResult = 0;

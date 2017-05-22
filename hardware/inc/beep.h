@@ -9,8 +9,8 @@
   */ 
 
 
-#ifndef __BEEP_H
-#define __BEEP_H
+#ifndef _BEEP_H_
+#define _BEEP_H_
 
 typedef struct
 {
@@ -28,5 +28,5 @@ void Beep_Set(_Bool status);
 
 
 
-#endif  /* __BEEP_H */
+#endif  /* _BEEP_H_ */
 
