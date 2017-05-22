@@ -7,6 +7,8 @@
 #include "key.h"
 #include "usart.h"
 #include "exti.h"
+#include "sht20.h"
+#include "i2c.h"
 
 
 void Hardware_Init(void)
@@ -20,13 +22,24 @@ void Hardware_Init(void)
     Key_Init();
     
     Exti_PC11_Config();
+    Usart1_Init(115200);
+    
+    IIC_Init();
 }
 
 
 int main(void)
 {
+    SHT20_INFO sht20;
+    
     Hardware_Init();											//Ó²¼þ³õÊ¼»¯
+    
+    Led4_Set(LED_ON);
+    
+    SHT20_GetValue(&sht20);
+    UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
 
-    WaterLights();
+    DelayXms(2000);
+    
 }
 

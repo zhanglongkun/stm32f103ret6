@@ -23,8 +23,6 @@ typedef enum
 } LED_ENUM;
 
 
-
-
 void Led_Init(void);
 
 void Led4_Set(LED_ENUM status);
