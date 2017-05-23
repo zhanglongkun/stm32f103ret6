@@ -12,7 +12,7 @@
 #ifndef _EXTI_H_
 #define _EXTI_H_
 
-void Exti_PC11_Config(void);
+void Exti_Key_Init(void);
 
 
 
