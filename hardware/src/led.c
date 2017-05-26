@@ -90,6 +90,8 @@ void WaterLights(void)
 {
     int i;
     for (i = 0; i < 1000; i++) {
+        
+        UsartPrintf(USART1, "led\r\n");
         Led4_Set(LED_ON);
         DelayXms(500);
         Led4_Set(LED_OFF);      //点亮LED4，并延时500ms，然后熄灭LED4
