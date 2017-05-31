@@ -1,4 +1,5 @@
 .\output\main.o: user\main.c
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\string.h
 .\output\main.o: .\core\stm32f10x.h
 .\output\main.o: .\core\core_cm3.h
 .\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdint.h
@@ -30,3 +31,20 @@
 .\output\main.o: .\fwlib\inc\misc.h
 .\output\main.o: .\hardware\inc\delay.h
 .\output\main.o: .\hardware\inc\led.h
+.\output\main.o: .\hardware\inc\key.h
+.\output\main.o: .\hardware\inc\usart.h
+.\output\main.o: .\hardware\inc\exti.h
+.\output\main.o: .\hardware\inc\sht20.h
+.\output\main.o: .\hardware\inc\i2c.h
+.\output\main.o: .\hardware\inc\adxl345.h
+.\output\main.o: .\UCOSII\CONFIG\includes.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\ctype.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdlib.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdarg.h
+.\output\main.o: .\UCOSII\CORE\ucos_ii.h
+.\output\main.o: .\UCOSII\CONFIG\os_cfg.h
+.\output\main.o: .\UCOSII\PORT\os_cpu.h
+.\output\main.o: user\manage.h
+.\output\main.o: user\interface.h
+.\output\main.o: user\manage.h

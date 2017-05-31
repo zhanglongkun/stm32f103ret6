@@ -13,6 +13,7 @@
 #define _MANAGER_H_
 
 #include <string.h>
+#include <stdio.h>
 
 #include "interface.h"
 #include "manage.h"

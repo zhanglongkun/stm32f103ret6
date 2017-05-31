@@ -120,11 +120,9 @@ int Conversion_Handle(USART_IO_INFO usartRev)
   unsigned char num1, num2;
   unsigned char a1 = 0, a2 = 0;
   unsigned short i = 0, j = 0;
-  unsigned char buf[8] = {0};
   ST_VAR_PELCO_D pelco;
 
   memset(&pelco, 0, sizeof(ST_VAR_PELCO_D));
-  pbuf = buf;
   
   for (i = 0; i < usartRev.dataLenPre; i++) {
       //将两个字节合并成一个字节
