@@ -38,6 +38,7 @@
 ".\output\adc.o"
 ".\output\tcrt5000.o"
 ".\output\main.o"
+".\output\sim808.o"
 ".\output\os_cpu_c.o"
 ".\output\os_cpu_a.o"
 ".\output\os_core.o"
