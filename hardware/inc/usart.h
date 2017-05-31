@@ -17,6 +17,7 @@
 
 #define USART_DEBUG		USART1		//调试打印所使用的串口组
 
+
 typedef struct
 {
     unsigned short dataLen;			//接收数据长度
@@ -24,6 +25,9 @@ typedef struct
 
     unsigned char buf[200];			//接收缓存
 }USART_IO_INFO;
+
+extern USART_IO_INFO usart1IOInfo;
+extern USART_IO_INFO usart2IOInfo;
 
 #define REV_OK		0	//接收完成标志
 #define REV_WAIT	1	//接收未完成标志

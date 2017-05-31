@@ -14,6 +14,7 @@
 
 #include "usart.h"
 
+#define GSM_IO USART2
 
 typedef unsigned char uint8;
 

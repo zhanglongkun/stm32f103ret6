@@ -31,8 +31,8 @@ void Hardware_Init(void)
     ADXL345_Init();
 }
 
-USART_IO_INFO usart1IOInfo;
-USART_IO_INFO usart2IOInfo;
+USART_IO_INFO usart1IOInfo = {0};
+USART_IO_INFO usart2IOInfo = {0};
 
 int main(void)
 {

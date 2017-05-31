@@ -175,8 +175,6 @@ void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...)
 
 extern unsigned char usart1Buf[64];
 extern unsigned char usart1Len;
-extern USART_IO_INFO usart1IOInfo;
-extern USART_IO_INFO usart2IOInfo;
 
 
 _Bool Usart1_IO_WaitRecive(void)

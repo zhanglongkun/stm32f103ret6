@@ -11,10 +11,6 @@
 
 #include "sim808.h"
 
-#define GSM_IO USART2
-
-USART_IO_INFO usart1IOInfo;
-USART_IO_INFO usart2IOInfo;
 
 
 void GSM_IO_Init(unsigned int baud)
