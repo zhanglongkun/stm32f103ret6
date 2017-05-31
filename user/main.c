@@ -22,7 +22,7 @@ void Hardware_Init(void)
 
     Key_Init();
     
-    Exti_PC11_Config();
+    Exti_Key_Init();
     
     Usart1_Init(115200);
     
@@ -31,6 +31,8 @@ void Hardware_Init(void)
     ADXL345_Init();
 }
 
+USART_IO_INFO usart1IOInfo;
+USART_IO_INFO usart2IOInfo;
 
 int main(void)
 {

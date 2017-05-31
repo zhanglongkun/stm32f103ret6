@@ -29,3 +29,4 @@
 .\output\led.o: .\fwlib\inc\stm32f10x_wwdg.h
 .\output\led.o: .\fwlib\inc\misc.h
 .\output\led.o: .\hardware\inc\led.h
+.\output\led.o: .\hardware\inc\delay.h

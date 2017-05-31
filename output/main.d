@@ -30,3 +30,9 @@
 .\output\main.o: .\fwlib\inc\misc.h
 .\output\main.o: .\hardware\inc\delay.h
 .\output\main.o: .\hardware\inc\led.h
+.\output\main.o: .\hardware\inc\key.h
+.\output\main.o: .\hardware\inc\usart.h
+.\output\main.o: .\hardware\inc\exti.h
+.\output\main.o: .\hardware\inc\sht20.h
+.\output\main.o: .\hardware\inc\i2c.h
+.\output\main.o: .\hardware\inc\adxl345.h
