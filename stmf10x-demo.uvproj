@@ -617,11 +617,6 @@
               <FileType>1</FileType>
               <FilePath>.\user\main.c</FilePath>
             </File>
-            <File>
-              <FileName>manage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\user\manage.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

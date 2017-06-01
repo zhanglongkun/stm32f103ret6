@@ -42,15 +42,17 @@ int main(void)
     Hardware_Init();											//Ó²¼þ³õÊ¼»¯
     
     Led4_Set(LED_ON);
-    
-    SHT20_GetValue(&sht20);
-    UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
 
-    ADXL345_GetValue(&adxl345);
-    UsartPrintf(USART1, "x = %0.1f, y = %0.1f, z = %0.1f\r\n",
-                adxl345.incidence_Xf, adxl345.incidence_Yf, adxl345.incidence_Zf);
+    while (1) {
+        SHT20_GetValue(&sht20);
+        UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
 
-    DelayXms(2000);
+        ADXL345_GetValue(&adxl345);
+        UsartPrintf(USART1, "x = %0.1f, y = %0.1f, z = %0.1f\r\n",
+                    adxl345.incidence_Xf, adxl345.incidence_Yf, adxl345.incidence_Zf);
+
+        DelayXms(2000);
+    }
     
 }
 

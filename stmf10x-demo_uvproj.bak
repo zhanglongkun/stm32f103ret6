@@ -364,7 +364,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\core;.\fwlib\inc;.\hardware\inc;.\UCOSII\CONFIG;.\UCOSII\CORE;.\UCOSII\PORT</IncludePath>
+              <IncludePath>.\core;.\fwlib\inc;.\hardware\inc;.\UCOSII\CONFIG;.\UCOSII\CORE;.\UCOSII\PORT;.\user</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -616,6 +616,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\user\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>manage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\manage.c</FilePath>
             </File>
           </Files>
         </Group>

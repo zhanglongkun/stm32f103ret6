@@ -18,6 +18,11 @@
 
 typedef unsigned char uint8;
 
+typedef struct
+{
+    char ip[16];
+    char port[8];
+} SERVICE_INFO;
 
 typedef struct
 {
@@ -27,17 +32,23 @@ typedef struct
     unsigned short dataType : 4;	//设定数据返回类型--16种
     unsigned short reboot : 1;		//死机重启标志
     unsigned short reverse : 2;		//预留
-
     unsigned short ipdBytes;
-} NET_DEVICE_INFO;
+} GSM_DEVICE_INFO;
 
 typedef enum
 {
     SIM_OK,
+    SIM_COMTINUE,
     SIM_COMMUNTION_ERR,
     SIM_CPIN_ERR,
-    SIM_CREG_FAIL
-}sim_status;
+    SIM_CREG_ERR,
+    SIM_CSQ_ERR,
+    SIM_CGREG_ERR,
+    SIM_CGATT_ERR,
+    SIM_CIPSHUT_ERR,
+    SIM_CIPCSGP_ERR,
+    SIM_CIPSTART_ERR
+} sim_status;
 
 
 void GSM_IO_Init(unsigned int baud);
