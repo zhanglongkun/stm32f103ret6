@@ -19,6 +19,41 @@
 #include "manage.h"
 
 
+unsigned char usart1Buf[64];
+unsigned char usart1Len;
+USART_IO_INFO usart1IOInfo;
+USART_IO_INFO usart2IOInfo;
+
+
+
+void PELCO_D_Task()
+{
+    USART_IO_INFO usartRev;
+    unsigned short i = 0;
+    
+    while (1) {
+        if(Usart1_IO_WaitRecive() == REV_OK) {
+            UsartPrintf(USART1, "buf = %s\r\n", usart1IOInfo.buf);
+
+            for (i = 0; i < usart1IOInfo.dataLenPre; i++) {
+                
+                UsartPrintf(USART1, "%d ", usart1IOInfo.buf[i]);
+            }
+            UsartPrintf(USART1, "\r\n");
+
+            memset(&usartRev, 0, sizeof(USART_IO_INFO));
+            memcpy(&usartRev, &usart1IOInfo, sizeof(USART_IO_INFO));
+            Conversion_Handle(usartRev);
+            
+            memset(&usart1IOInfo, 0, sizeof(USART_IO_INFO));
+        }
+        DelayUs(200);
+    }
+}
+
+
+
+
 void Hardware_Init(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		//中断控制器分组设置
@@ -39,39 +74,9 @@ void Hardware_Init(void)
 //    ADXL345_Init();
 }
 
-unsigned char usart1Buf[64];
-unsigned char usart1Len;
-USART_IO_INFO usart1IOInfo;
-USART_IO_INFO usart2IOInfo;
 
 int main(void)
 {
-    USART_IO_INFO usartRev;
-    unsigned short i = 0;
-    
-    Hardware_Init();											//硬件初始化
-    UsartPrintf(USART1, "111\r\n");
-    
-    while (1) {
-        if(Usart1_IO_WaitRecive() == REV_OK) {
-            UsartPrintf(USART1, "buf = %s\r\n", usart1IOInfo.buf);
-
-            for (i = 0; i < usart1IOInfo.dataLenPre; i++) {
-                
-                UsartPrintf(USART1, "%d ", usart1IOInfo.buf[i]);
-            }
-            UsartPrintf(USART1, "\r\n");
-
-            memset(&usartRev, 0, sizeof(USART_IO_INFO));
-            memcpy(&usartRev, &usart1IOInfo, sizeof(USART_IO_INFO));
-            Conversion_Handle(usartRev);
-            
-            memset(&usart1IOInfo, 0, sizeof(USART_IO_INFO));
-        }
-        DelayUs(200);
-    }
-    
-#if 0
     unsigned char err;
     OS_TMR *tmr;                    //软件定时器句柄
     OS_STK osstk[100];
@@ -81,14 +86,13 @@ int main(void)
     OSInit();
     UsartPrintf(USART1, "11111111\r\n");
 
-    OSTaskCreate(WaterLights, (void *)0, &osstk[99], 7);
+    OSTaskCreate(PELCO_D_Task, (void *)0, &osstk[99], 7);
     UsartPrintf(USART1, "222\r\n");
 	tmr = OSTmrCreate(100, 100, OS_TMR_OPT_PERIODIC, (OS_TMR_CALLBACK)NULL, 0, (INT8U *)"tmr1", &err);
 	OSTmrStart(tmr, &err);
     UsartPrintf(USART1, "33\r\n");
     OSStart();
     UsartPrintf(USART1, "444\r\n");
-#endif
     
 #if 0
     
