@@ -23,7 +23,7 @@
   */   
 void Led_Set(unsigned char ledNum, unsigned char status)
 {
-  switch (ledNum) {
+    switch (ledNum) {
       case 4:
           if (1 == status) {
               Led4_Set(LED_ON);
@@ -59,9 +59,9 @@ void Led_Set(unsigned char ledNum, unsigned char status)
       default:
           UsartPrintf(USART1, "parameter error\r\n");
           break;
-  }
+    }
 
-  return;
+    return;
 }
 
 
@@ -76,7 +76,7 @@ void Led_Set(unsigned char ledNum, unsigned char status)
   */ 
 void Manager(ST_VAR_PELCO_D pelco)
 {
-  if (0xff == pelco.syncByte) {
+    if (0xff == pelco.syncByte) {
       if (0x01 == pelco.addressCode) {
           switch (pelco.instructionCode) {
               case 0x0001:
@@ -99,9 +99,9 @@ void Manager(ST_VAR_PELCO_D pelco)
                   break;
           }
       }
-  }
+    }
 
-  return;
+    return;
 }
 
 
@@ -116,92 +116,37 @@ void Manager(ST_VAR_PELCO_D pelco)
   */ 
 int Conversion_Handle(USART_IO_INFO usartRev)
 {
-  unsigned short checkCode = 0;
-  unsigned char num1, num2;
-  unsigned char a1 = 0, a2 = 0;
-  unsigned short i = 0, j = 0;
-  ST_VAR_PELCO_D pelco;
+    unsigned short checkCode = 0;
+    ST_VAR_PELCO_D pelco;
 
-  memset(&pelco, 0, sizeof(ST_VAR_PELCO_D));
-  
-  for (i = 0; i < usartRev.dataLenPre; i++) {
-      //将两个字节合并成一个字节
-      a1 = usartRev.buf[i];
-      sscanf(&a1, "%x", &num1);
-      
-      a2 = usartRev.buf[++i];
-      sscanf(&a2, "%x", &num2);
-  
-      num1 = num2 + (num1 << 4);
+    memset(&pelco, 0, sizeof(ST_VAR_PELCO_D));
 
-      switch (j) {
-          case 0:
-              pelco.syncByte = num1;
-              j++;
-              break;
-              
-          case 1:
-              pelco.addressCode = num1;
-              checkCode += num1;
-              j++;
-              break;
-              
-          case 2:
-              pelco.instructionCode = num1;
-              checkCode += num1;
-              j++;
-              break;
-          
-          case 3:
-              pelco.instructionCode = num1 + (pelco.instructionCode << 8);
-              checkCode += num1;
-              j++;
-              break;
-              
-          case 4:
-              pelco.dataCode1 = num1;
-              checkCode += num1;
-              j++;
-              break;
-              
-          case 5:
-              pelco.dataCode2 = num1;
-              checkCode += num1;
-              j++;
-              break;
-          
-          case 6:
-              pelco.checkCode = num1;
-              j++;
-              break;
-              
-          default:
-              UsartPrintf(USART1, "error\r\n");
-              break;
-      }
+    pelco.syncByte = usartRev.buf[0];
+    pelco.addressCode = usartRev.buf[1];
+    pelco.instructionCode = usartRev.buf[3] + usartRev.buf[2] << 8;
+    pelco.dataCode1 = usartRev.buf[4];
+    pelco.dataCode2 = usartRev.buf[5];
+    pelco.checkCode = usartRev.buf[6];
 
-      
-      UsartPrintf(USART1, "%d\r\n", num1);
-  }
+    //判断校验码
+    checkCode = (usartRev.buf[1] + usartRev.buf[2] + usartRev.buf[3]
+                 + usartRev.buf[4] + usartRev.buf[5]) % 256;
 
-  //判断校验码
-  checkCode = checkCode % 256;
-
-  if (checkCode != pelco.checkCode) {
+    if (checkCode != pelco.checkCode) {
       
       UsartPrintf(USART1, "data error\r\n");
       return -1;
-  }
-  
-  UsartPrintf(USART1, "........................\r\n");
-  UsartPrintf(USART1, "%d\r\n", pelco.syncByte);
-  UsartPrintf(USART1, "%d\r\n", pelco.addressCode);
-  UsartPrintf(USART1, "%d\r\n", pelco.instructionCode);
-  UsartPrintf(USART1, "%d\r\n", pelco.dataCode1);
-  UsartPrintf(USART1, "%d\r\n", pelco.dataCode2);
-  UsartPrintf(USART1, "%d\r\n", pelco.checkCode);
+    }
 
-  Manager(pelco);
+    UsartPrintf(USART1, "........................\r\n");
+    UsartPrintf(USART1, "0x%x\r\n", pelco.syncByte);
+    UsartPrintf(USART1, "0x%x\r\n", pelco.addressCode);
+    UsartPrintf(USART1, "0x%x\r\n", pelco.instructionCode);
+    UsartPrintf(USART1, "0x%x\r\n", pelco.dataCode1);
+    UsartPrintf(USART1, "0x%x\r\n", pelco.dataCode2);
+    UsartPrintf(USART1, "0x%x\r\n", pelco.checkCode);
 
-  return 0;
+    Manager(pelco);
+
+    return 0;
 }
