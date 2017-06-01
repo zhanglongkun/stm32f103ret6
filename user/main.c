@@ -36,7 +36,7 @@ void Hardware_Init(void)
     
 //    IIC_Init();
 
-    ADXL345_Init();
+//    ADXL345_Init();
 }
 
 unsigned char usart1Buf[64];
@@ -58,7 +58,7 @@ int main(void)
 
             for (i = 0; i < usart1IOInfo.dataLenPre; i++) {
                 
-                UsartPrintf(USART1, "0x%x ", usart1IOInfo.buf[i]);
+                UsartPrintf(USART1, "%d ", usart1IOInfo.buf[i]);
             }
             UsartPrintf(USART1, "\r\n");
 

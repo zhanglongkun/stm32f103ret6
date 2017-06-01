@@ -95,6 +95,21 @@ void Manager(ST_VAR_PELCO_D pelco)
               case 0x0010:
                   break;
 
+              case 0x0020:
+                  break;
+                  
+              case 0x0040:
+                  break;
+
+              case 0x0080:
+                  break;
+
+              case 0x0100:
+                  break;
+                  
+              case 0x0200:
+                  break;
+
               default:
                   break;
           }
@@ -123,7 +138,7 @@ int Conversion_Handle(USART_IO_INFO usartRev)
 
     pelco.syncByte = usartRev.buf[0];
     pelco.addressCode = usartRev.buf[1];
-    pelco.instructionCode = usartRev.buf[3] + usartRev.buf[2] << 8;
+    pelco.instructionCode = usartRev.buf[3] + (usartRev.buf[2] << 8);
     pelco.dataCode1 = usartRev.buf[4];
     pelco.dataCode2 = usartRev.buf[5];
     pelco.checkCode = usartRev.buf[6];
