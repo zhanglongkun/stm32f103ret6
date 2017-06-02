@@ -36,6 +36,8 @@ void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short 
 
 void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...);
 
+_Bool Usart1_IO_WaitRecive(void);
+
 
 
 #endif  /* __USART_H */
