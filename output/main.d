@@ -37,6 +37,7 @@
 .\output\main.o: .\hardware\inc\sht20.h
 .\output\main.o: .\hardware\inc\i2c.h
 .\output\main.o: .\hardware\inc\adxl345.h
+.\output\main.o: .\hardware\inc\hwtimer.h
 .\output\main.o: .\UCOSII\CONFIG\includes.h
 .\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
 .\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\ctype.h

@@ -37,6 +37,7 @@
 ".\output\sht20.o"
 ".\output\tcrt5000.o"
 ".\output\usart.o"
+".\output\hwtimer.o"
 ".\output\main.o"
 ".\output\manage.o"
 ".\output\os_cpu_c.o"

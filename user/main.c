@@ -12,6 +12,7 @@
 #include "sht20.h"
 #include "i2c.h"
 #include "adxl345.h"
+#include "hwtimer.h"
 
 //os
 #include "includes.h"
@@ -24,8 +25,25 @@ unsigned char usart1Len;
 USART_IO_INFO usart1IOInfo;
 USART_IO_INFO usart2IOInfo;
 
+//pelco_d 协议
+#define PELCO_D_TASK_PRI 7
+#define PELCO_D_STK_SIZE  512
+OS_STK PELCO_D_TASK_STK[PELCO_D_STK_SIZE];
 
+//任务堆栈计算
+#define CHECKTASK_TASK_PRI 8
+#define CHECKTASK_STK_SIZE 64
+OS_STK CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE];
 
+/**
+  ******************************************************************************
+  * Function:     PELCO_D_Task()
+  * Description:  pelco_d 协议任务
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-06-02
+  ******************************************************************************
+  */ 
 void PELCO_D_Task()
 {
     USART_IO_INFO usartRev;
@@ -47,11 +65,33 @@ void PELCO_D_Task()
             
             memset(&usart1IOInfo, 0, sizeof(USART_IO_INFO));
         }
-        DelayUs(200);
+        OSTimeDly(2);
     }
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     Check_Stack_Task()
+  * Description:  检测堆栈大小任务
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-06-02
+  ******************************************************************************
+  */ 
+static void Check_Stack_Task()
+{
+    unsigned int ret;
+    OS_STK_DATA pelcoData;
+
+    while (1) {
+        ret = OSTaskStkChk(PELCO_D_TASK_PRI, &pelcoData);
+
+        UsartPrintf(USART1, "ret = %d, free = %d, used = %d\r\n", ret, pelcoData.OSFree, pelcoData.OSUsed);
+        
+        OSTimeDly(10);
+    }
+}
 
 
 void Hardware_Init(void)
@@ -68,6 +108,7 @@ void Hardware_Init(void)
     
     Usart1_Init(115200);
     Usart2_Init(115200);
+    RTOS_TimerInit();
     
 //    IIC_Init();
 
@@ -79,117 +120,31 @@ int main(void)
 {
     unsigned char err;
     OS_TMR *tmr;                    //软件定时器句柄
-    OS_STK osstk[100];
     
     Hardware_Init();											//硬件初始化
     
     OSInit();
     UsartPrintf(USART1, "11111111\r\n");
 
-    OSTaskCreate(PELCO_D_Task, (void *)0, &osstk[99], 7);
+    OSTaskCreateExt(PELCO_D_Task, (void *)0, &PELCO_D_TASK_STK[PELCO_D_STK_SIZE - 1], PELCO_D_TASK_PRI,
+                    PELCO_D_TASK_PRI, &PELCO_D_TASK_STK[0], PELCO_D_STK_SIZE, NULL, OS_TASK_OPT_STK_CHK);
     UsartPrintf(USART1, "222\r\n");
-	tmr = OSTmrCreate(100, 100, OS_TMR_OPT_PERIODIC, (OS_TMR_CALLBACK)NULL, 0, (INT8U *)"tmr1", &err);
-	OSTmrStart(tmr, &err);
+    
+#if 0
+    OSTaskCreateExt(Check_Stack_Task, (void *)0, &CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE - 1], CHECKTASK_TASK_PRI,
+                    CHECKTASK_TASK_PRI, &CHECKTASK_TASK_STK[0], CHECKTASK_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
+#endif
+
+    OSTaskCreate(Check_Stack_Task, (void *)0, &CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE - 1], CHECKTASK_TASK_PRI);
+
+    
+#if 0
+    //定时回调函数
+    tmr = OSTmrCreate(100, 100, OS_TMR_OPT_PERIODIC, (OS_TMR_CALLBACK)NULL, 0, (INT8U *)"tmr1", &err);
+    OSTmrStart(tmr, &err);
+#endif
     UsartPrintf(USART1, "33\r\n");
     OSStart();
     UsartPrintf(USART1, "444\r\n");
-    
-#if 0
-    
-    char cmdBuf[30] = {0};
-    SHT20_INFO sht20;
-    ADXL345_INFO adxl345;
-    int timeOut = 200;
-    Hardware_Init();											//硬件初始化
-    
-	sprintf(cmdBuf, "AT+GSV\r\n");		//发送命令
-	
-    while(1)
-    {
-
-//            UsartPrintf(USART2,"1111\r\n");
-            Usart2_Send_Cmd(cmdBuf, strlen(cmdBuf));
-            DelayMs(2000);
-        
-            UsartPrintf(USART2, "11111111\r\n");
-
-            
-            while(timeOut--)                                                //等待
-            {
-                UsartPrintf(USART1, "22222\r\n");
-                if(Usart2_IO_WaitRecive() == REV_OK)                           //如果收到数据
-                {
-                    UsartPrintf(USART1, "USART2 = \r\n");
-                    UsartPrintf(USART1, "%s\r\n", usart2IOInfo.buf);
-                    memset(&usart2IOInfo, 0, sizeof(USART_IO_INFO));
-                    break;
-                }
-            }
-            
-            UsartPrintf(USART1, "33333\r\n");
-            DelayXms(1000);
-        UsartPrintf(USART1, "aaaa\r\n");
-        Usart2_Send_Cmd();
-        DelayMs(2000);
-        UsartPrintf(USART1, "1111111\r\n");
-        
-		if(Usart2_IO_WaitRecive() == REV_OK)
-		{
-            UsartPrintf(USART1, "buf = %s\r\n", usart2IOInfo.buf);
-            
-            UsartPrintf(USART1, "2222\r\n");
-		}
-        DelayMs(2000);
-        UsartPrintf(USART1, "3333\r\n");
-#endif
-
-        
-#if 0
-        UsartPrintf(USART1, "1111111\r\n");
-        Usart2_Send_Cmd();
-        UsartPrintf(USART1, "2222\r\n");
-        DelayMs(2000);
-        
-        UsartPrintf(USART1, "33333\r\n");
-        UsartPrintf(USART1, "buf = %s", usartIOInfo.buf);
-        UsartPrintf(USART1, "\r\n44444\r\n");
-#endif
-
-#if 0
-	while(1)
-	{
-		
-		switch(Keyboard())
-		{
-			case KEY0DOWN:
-                Led4_Set(LED_ON);
-			break;
-			
-			case KEY1DOWN:
-                Led5_Set(LED_ON);
-			break;
-			
-			case KEY2DOWN:
-                Led6_Set(LED_ON);
-			break;
-			
-			case KEY3DOWN:
-                Led7_Set(LED_ON);
-			break;
-		}
-	}
-    
-    Led4_Set(LED_ON);
-    
-    SHT20_GetValue(&sht20);
-    UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
-
-    ADXL345_GetValue(&adxl345);
-    UsartPrintf(USART1, "x = %0.1f, y = %0.1f, z = %0.1f\r\n",
-                adxl345.incidence_Xf, adxl345.incidence_Yf, adxl345.incidence_Zf);
-
-    DelayXms(2000);
-#endif
-    
 }
 
