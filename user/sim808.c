@@ -45,95 +45,92 @@ void GSM_IO_Init(unsigned int baud)
   */ 
 sim_status GSM_Device_InitStep()
 {
+    USART_IO_INFO gsmRevBuf = {0};
     char cfgBuffer[32] = {0};
     
     switch (gsmDeviceInfo.initStep) {
-        case 0:
+        case GSM_AT:
             //检测模块是否正常
             UsartPrintf(USART1, "AT\r\n");
-            if (GSM_Device_SendCmd("AT\r\n", "OK", 1)) {
+            if (GSM_Device_SendCmd("AT\r\n", "OK", &gsmRevBuf)) {
                 return SIM_COMMUNTION_ERR;
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        case 1:
+        case GSM_AT_CPIN:
             //sim卡是否解锁,即检查登入移动设备(ME)的密码.READY(表示 SIM卡正常,同时不需要登入密码)
             UsartPrintf(USART1, "AT+CPIN?\r\n");
-            if (GSM_Device_SendCmd("AT+CPIN?\r\n", "READY", 1)) {
+            if (GSM_Device_SendCmd("AT+CPIN?\r\n", "READY", &gsmRevBuf)) {
                 return SIM_CPIN_ERR;
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        case 2:
+        case GSM_AT_CREG:
             //网络注册及状态查询
             UsartPrintf(USART1, "AT+CREG?\r\n");
-            if (GSM_Device_SendCmd("AT+CREG?\r\n", "0,1", 1)) {
-                return SIM_CREG_ERR;	
+            if (GSM_Device_SendCmd("AT+CREG?\r\n", "0,1", &gsmRevBuf)) {
+                return SIM_CREG_ERR;
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        case 3:
+        case GSM_AT_CSQ:
             //查询信号强度
             UsartPrintf(USART1, "AT+CSQ\r\n");
-            if (GSM_Device_SendCmd("AT+CSQ\r\n","OK", 1)) {
+            if (GSM_Device_SendCmd("AT+CSQ\r\n","OK", &gsmRevBuf)) {
                 return SIM_CSQ_ERR;	
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        case 4:
+        case GSM_AT_CGREG:
             //检查网络注册状态
             UsartPrintf(USART1, "AT+CGREG?\r\n");
-            if (GSM_Device_SendCmd("AT+CGREG?\r\n","OK", 1)) {
-                return SIM_CGREG_ERR;	
+            if (GSM_Device_SendCmd("AT+CGREG?\r\n","OK", &gsmRevBuf)) {
+                return SIM_CGREG_ERR;
             }
             gsmDeviceInfo.initStep++;
             break;
 
- 
-
-        case 5:
+        case GSM_AT_CGATT:
             //附着GPRS业务
             UsartPrintf(USART1, "AT+CGATT=1\r\n");
-            if (GSM_Device_SendCmd("AT+CGATT=1\r\n", "OK", 1)) {
-                return SIM_CGATT_ERR;	
+            if (GSM_Device_SendCmd("AT+CGATT=1\r\n", "OK", &gsmRevBuf)) {
+                return SIM_CGATT_ERR;
             }
             gsmDeviceInfo.initStep++;
             break;
             
-        case 6:
+        case GSM_AT_CGDCONT:
             //设置PDP上下文,互联网接协议,接入点等信息
             UsartPrintf(USART1, "AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n");
-            if (GSM_Device_SendCmd("AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n", "OK", 1)) {
-                return SIM_CIPSHUT_ERR;   
+            if (GSM_Device_SendCmd("AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n", "OK", &gsmRevBuf)) {
+                return SIM_CGDCONT_ERR;   
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        case 7:
+        case GSM_AT_CIPCSGP:
             //设置为GPRS连接模式
             UsartPrintf(USART1, "AT+CIPCSGP=1,\"CMNET\"\r\n");
-            if (GSM_Device_SendCmd("AT+CIPCSGP=1,\"CMNET\"\r\n", "OK", 1)) {
+            if (GSM_Device_SendCmd("AT+CIPCSGP=1,\"CMNET\"\r\n", "OK", &gsmRevBuf)) {
                 return SIM_CIPCSGP_ERR;   
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        
-        case 8:
+        case GSM_AT_CIFSR:
             //获取IP地址
             UsartPrintf(USART1, "AT+CIFSR\r\n");
-            if (!GSM_Device_SendCmd("AT+CIFSR\r\n", "ERROR", 1)) {
+            if (!GSM_Device_SendCmd("AT+CIFSR\r\n", "ERROR", &gsmRevBuf)) {
                 return SIM_CIPCSGP_ERR;   
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        
-        case 9:
+        case GSM_AT_CIPSTART:
             //连接服务器
             memset(cfgBuffer, 0, sizeof(cfgBuffer));
 
@@ -144,17 +141,16 @@ sim_status GSM_Device_InitStep()
             strcat(cfgBuffer, "\r\n");
             UsartPrintf(USART1, "STA Tips:	%s", cfgBuffer);
             
-            if (GSM_Device_SendCmd(cfgBuffer, "CONNECT", 1)) {
+            if (GSM_Device_SendCmd(cfgBuffer, "CONNECT", &gsmRevBuf)) {
                 return SIM_CIPSTART_ERR;   
             }
             gsmDeviceInfo.initStep++;
             break;
 
-        
-        case 10:
+        case GSM_AT_CIPSTATUS:
             //状态查询
             UsartPrintf(USART1, "AT+CIPSTATUS\r\n");
-            if (GSM_Device_SendCmd("AT+CIPSTATUS\r\n", "CONNECT OK", 1)) {
+            if (GSM_Device_SendCmd("AT+CIPSTATUS\r\n", "CONNECT OK", &gsmRevBuf)) {
                 return SIM_CIPSTART_ERR;   
             }
             gsmDeviceInfo.initStep++;
@@ -165,7 +161,7 @@ sim_status GSM_Device_InitStep()
             break;
     }
 
-    if (11 == gsmDeviceInfo.initStep) {
+    if (GSM_SUCCEED == gsmDeviceInfo.initStep) {
         return SIM_OK;
     }
 
@@ -218,6 +214,7 @@ uint8 GSM_IO_WaitRecive()
     return REV_WAIT;
 }
 
+
 /**
   ******************************************************************************
   * Function:     GSM_IO_ClearRecive()
@@ -265,7 +262,7 @@ void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-uint8 GSM_Device_SendCmd(char *cmd, char *res, _Bool mode)
+uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
 {
     unsigned char timeout = 300;
     
@@ -273,16 +270,18 @@ uint8 GSM_Device_SendCmd(char *cmd, char *res, _Bool mode)
 
     while (timeout--) {
         if (GSM_IO_WaitRecive() == REV_OK) {
-            if (strstr((const char *)usart2IOInfo.buf, res) != 0) {
-                if (mode) {
-                    GSM_IO_ClearRecive();
-                }
+            memcpy(revBuf, &usart2IOInfo, sizeof(USART_IO_INFO));
+
+            if (strstr((const char *)revBuf.buf, res) != NULL) {
+                GSM_IO_ClearRecive();
                 return 0;
             }
         }
 
         DelayUs(200);
     }
+    
+    GSM_IO_ClearRecive();
 
     return 1;
 }

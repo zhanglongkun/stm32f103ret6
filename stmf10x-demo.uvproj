@@ -607,6 +607,11 @@
               <FileType>1</FileType>
               <FilePath>.\hardware\src\tcrt5000.c</FilePath>
             </File>
+            <File>
+              <FileName>hwtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\hwtimer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

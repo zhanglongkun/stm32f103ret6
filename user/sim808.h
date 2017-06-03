@@ -45,10 +45,26 @@ typedef enum
     SIM_CSQ_ERR,
     SIM_CGREG_ERR,
     SIM_CGATT_ERR,
-    SIM_CIPSHUT_ERR,
+    SIM_CGDCONT_ERR,
     SIM_CIPCSGP_ERR,
     SIM_CIPSTART_ERR
 } sim_status;
+
+typedef enum
+{
+    GSM_AT,
+    GSM_AT_CPIN,
+    GSM_AT_CREG,
+    GSM_AT_CSQ,
+    GSM_AT_CGREG,
+    GSM_AT_CGATT,
+    GSM_AT_CGDCONT,
+    GSM_AT_CIPCSGP,
+    GSM_AT_CIFSR,
+    GSM_AT_CIPSTART,
+    GSM_AT_CIPSTATUS,
+    GSM_SUCCEED
+} gsm_init_step;
 
 
 void GSM_IO_Init(unsigned int baud);
@@ -61,7 +77,7 @@ uint8 GSM_IO_WaitRecive();
 
 void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len);
 
-uint8 GSM_Device_SendCmd(char *cmd, char *res, _Bool mode);
+uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
 
 #endif  /* _GSM_H_ */
 
