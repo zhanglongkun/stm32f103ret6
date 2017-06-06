@@ -1,5 +1,6 @@
-.\output\sim808.o: user\sim808.c
-.\output\sim808.o: user\sim808.h
+.\output\sim808.o: hardware\src\sim808.c
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
+.\output\sim808.o: .\hardware\inc\sim808.h
 .\output\sim808.o: .\hardware\inc\usart.h
 .\output\sim808.o: .\core\stm32f10x.h
 .\output\sim808.o: .\core\core_cm3.h

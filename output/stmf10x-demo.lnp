@@ -37,6 +37,8 @@
 ".\output\adxl345.o"
 ".\output\adc.o"
 ".\output\tcrt5000.o"
+".\output\hwtimer.o"
+".\output\sim808.o"
 ".\output\main.o"
 ".\output\os_cpu_c.o"
 ".\output\os_cpu_a.o"

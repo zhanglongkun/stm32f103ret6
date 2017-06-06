@@ -36,3 +36,4 @@
 .\output\main.o: .\hardware\inc\sht20.h
 .\output\main.o: .\hardware\inc\i2c.h
 .\output\main.o: .\hardware\inc\adxl345.h
+.\output\main.o: .\hardware\inc\sim808.h

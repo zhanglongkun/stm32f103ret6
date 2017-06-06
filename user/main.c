@@ -10,6 +10,8 @@
 #include "sht20.h"
 #include "i2c.h"
 #include "adxl345.h"
+#include "sim808.h"
+
 
 USART_IO_INFO usart1IOInfo = {0};
 USART_IO_INFO usart2IOInfo = {0};
@@ -23,11 +25,12 @@ void Hardware_Init(void)
     Led_Init();											//LED接口初始化
 
     Key_Init();
-    
+
     Exti_Key_Init();
-    
+
     Usart1_Init(115200);
-    
+    GSM_IO_Init(115200);
+
     IIC_Init();
 
     ADXL345_Init();
@@ -36,14 +39,19 @@ void Hardware_Init(void)
 
 int main(void)
 {
+    Hardware_Init();											//硬件初始化
+
+    GSM_Device_Init();
+
+#if 0
     SHT20_INFO sht20;
     ADXL345_INFO adxl345;
-    
+
     Hardware_Init();											//硬件初始化
-    
     Led4_Set(LED_ON);
 
-    while (1) {
+    while (1)
+    {
         SHT20_GetValue(&sht20);
         UsartPrintf(USART1, "temp = %0.1f, humi = %0.1f\r\n", sht20.tempreture, sht20.humidity);
 
@@ -53,6 +61,7 @@ int main(void)
 
         DelayXms(2000);
     }
-    
+#endif
+
 }
 
