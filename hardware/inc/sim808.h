@@ -67,7 +67,9 @@ typedef enum
 } gsm_init_step;
 
 
-void GSM_IO_Init(unsigned int baud);
+void GSM_IO_Init();
+
+void GSM_Init();
 
 sim_status GSM_Device_Check();
 
@@ -78,6 +80,8 @@ uint8 GSM_IO_WaitRecive();
 void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len);
 
 uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
+
+void GSM_IO_ClearRecive();
 
 #endif  /* _GSM_H_ */
 

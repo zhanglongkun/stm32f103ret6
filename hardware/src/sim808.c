@@ -24,7 +24,11 @@
 
 
 GSM_DEVICE_INFO gsmDeviceInfo = {0};
+#if 0
 SERVICE_INFO serviceInfo = {"106.75.148.220", "6666"};
+#endif
+
+SERVICE_INFO serviceInfo = {"183.230.40.39", "876"};
 
 
 
@@ -37,9 +41,82 @@ SERVICE_INFO serviceInfo = {"106.75.148.220", "6666"};
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-void GSM_IO_Init(unsigned int baud)
+void GSM_IO_Init()
 {
-    Usart2_Init(baud);
+    GPIO_InitTypeDef gpioInitStruct;
+    USART_InitTypeDef usartInitStruct;
+    NVIC_InitTypeDef nvicInitStruct;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+
+    //PA2   TXD
+    gpioInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+    gpioInitStruct.GPIO_Pin = GPIO_Pin_2;
+    gpioInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &gpioInitStruct);
+
+    //PA3   RXD
+    gpioInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    gpioInitStruct.GPIO_Pin = GPIO_Pin_3;
+    gpioInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &gpioInitStruct);
+
+    usartInitStruct.USART_BaudRate = 115200;
+    usartInitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None; //无硬件流控
+    usartInitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;                 //接收和发送
+    usartInitStruct.USART_Parity = USART_Parity_No;                             //无校验
+    usartInitStruct.USART_StopBits = USART_StopBits_1;                          //1位停止位
+    usartInitStruct.USART_WordLength = USART_WordLength_8b;                     //8位数据位
+    USART_Init(USART2, &usartInitStruct);
+
+    USART_Cmd(USART2, ENABLE);                                                  //使能串口
+
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);                              //使能接收中断
+
+    nvicInitStruct.NVIC_IRQChannel = USART2_IRQn;
+    nvicInitStruct.NVIC_IRQChannelCmd = ENABLE;
+    nvicInitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+    nvicInitStruct.NVIC_IRQChannelSubPriority = 0;
+    NVIC_Init(&nvicInitStruct);
+
+    GSM_IO_ClearRecive();
+    
+    return;
+}
+
+
+/**
+  ******************************************************************************
+  * Function:     GSM_Init()
+  * Description:  GSM初始化
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-06-06
+  ******************************************************************************
+  */ 
+void GSM_Init()
+{
+    GPIO_InitTypeDef gpioInitStruct;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC, ENABLE);
+
+    //
+    gpioInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+    gpioInitStruct.GPIO_Pin = GPIO_Pin_1;			//GPIOA1-复位
+    gpioInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &gpioInitStruct);
+
+    gpioInitStruct.GPIO_Pin = GPIO_Pin_4;			//GPIOC4-PowerKey
+    GPIO_Init(GPIOC, &gpioInitStruct);
+
+    gpioInitStruct.GPIO_Mode = GPIO_Mode_IPD;
+    gpioInitStruct.GPIO_Pin = GPIO_Pin_7;			//GPIOA7-status
+    GPIO_Init(GPIOA, &gpioInitStruct);
+
+    GPIO_SetBits(GPIOC, GPIO_Pin_4);
+    
+    GSM_IO_Init();
 
     return;
 }
@@ -281,7 +358,7 @@ uint8 GSM_IO_WaitRecive()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-void GSM_IO_ClearRecive(void)
+void GSM_IO_ClearRecive()
 {
     usart2IOInfo.dataLen = 0;
 

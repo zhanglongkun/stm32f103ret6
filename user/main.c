@@ -29,7 +29,8 @@ void Hardware_Init(void)
     Exti_Key_Init();
 
     Usart1_Init(115200);
-    GSM_IO_Init(115200);
+    
+    GSM_Init();
 
     IIC_Init();
 

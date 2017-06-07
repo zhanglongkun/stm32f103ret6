@@ -4,9 +4,92 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 Y:\stm32f103ret6\stmf10x-demo.uvproj
-Project File Date:  06/03/2017
+Project File Date:  06/06/2017
 
 <h2>Output:</h2>
-</pre>
-</body>
-</html>
+Build target 'stm32f103ret'
+compiling sim808.c...
+.\hardware\inc\sim808.h(70): warning:  #1295-D: Deprecated declaration GSM_IO_Init - give arg types
+  void GSM_IO_Init();
+.\hardware\inc\sim808.h(72): warning:  #1295-D: Deprecated declaration GSM_Init - give arg types
+  void GSM_Init();
+.\hardware\inc\sim808.h(74): warning:  #1295-D: Deprecated declaration GSM_Device_Check - give arg types
+  sim_status GSM_Device_Check();
+.\hardware\inc\sim808.h(76): warning:  #1295-D: Deprecated declaration GSM_Device_Init - give arg types
+  uint8 GSM_Device_Init();
+.\hardware\inc\sim808.h(78): warning:  #1295-D: Deprecated declaration GSM_IO_WaitRecive - give arg types
+  uint8 GSM_IO_WaitRecive();
+.\hardware\inc\sim808.h(84): warning:  #1295-D: Deprecated declaration GSM_IO_ClearRecive - give arg types
+  void GSM_IO_ClearRecive();
+hardware\src\sim808.c(168): warning:  #223-D: function "strstr" declared implicitly
+                  if (strstr(&gsmRevBuf.buf, "0,0")) {
+hardware\src\sim808.c(263): warning:  #223-D: function "memset" declared implicitly
+              memset(cfgBuffer, 0, sizeof(cfgBuffer));
+hardware\src\sim808.c(265): warning:  #223-D: function "strcpy" declared implicitly
+              strcpy(cfgBuffer, "AT+CIPSTART=\"TCP\",\"");
+hardware\src\sim808.c(266): warning:  #223-D: function "strcat" declared implicitly
+              strcat(cfgBuffer, serviceInfo.ip);
+hardware\src\sim808.c(318): warning:  #188-D: enumerated type mixed with another type
+      sim_status res = 1;
+hardware\src\sim808.c(322): warning:  #223-D: function "DelayMs" declared implicitly
+          DelayMs(1000);
+hardware\src\sim808.c(324): warning:  #940-D: missing return statement at end of non-void function "GSM_Device_Init"
+  }
+hardware\src\sim808.c(367): warning:  #223-D: function "memset" declared implicitly
+      memset(usart2IOInfo.buf, 0, sizeof(usart2IOInfo.buf));
+hardware\src\sim808.c(403): warning:  #69-D: integer conversion resulted in truncation
+      unsigned char timeout = 300;
+hardware\src\sim808.c(405): warning:  #223-D: function "strlen" declared implicitly
+      GSM_SendString(GSM_IO, (uint8 *)cmd, strlen((uint8 *)cmd));
+hardware\src\sim808.c(409): warning:  #223-D: function "memcpy" declared implicitly
+              memcpy(revBuf, &usart2IOInfo, sizeof(USART_IO_INFO));
+hardware\src\sim808.c(411): warning:  #223-D: function "strstr" declared implicitly
+              if (strstr((const char *)revBuf->buf, res) != NULL) {
+hardware\src\sim808.c(417): warning:  #223-D: function "DelayUs" declared implicitly
+          DelayUs(200);
+hardware\src\sim808.c: 19 warnings, 0 errors
+linking...
+Program Size: Code=32980 RO-data=1128 RW-data=180 ZI-data=7340  
+FromELF: creating hex file...
+".\output\stmf10x-demo.axf" - 0 Error(s), 19 Warning(s).
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+"Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+ardware\inc\sim808.h(76): warning:  #1295-D: Deprecated declaration GSM_Device_Init - give arg types
+  uint8 GSM_Device_Init();
+.\hardware\inc\sim808.h(78): warning:  #1295-D: Deprecated declaration GSM_IO_WaitRecive - give arg types
+  uint8 GSM_IO_WaitRecive();
+.\hardware\inc\sim808.h(84): warning:  #1295-D: Deprecated declaration GSM_IO_ClearRecive - give arg types
+  void GSM_IO_ClearRecive();
+user\main.c: 6 warnings, 0 errors
+linking...
+Program Size: Code=33096 RO-data=1128 RW-data=180 ZI-data=7340  
+FromELF: creating hex file...
+".\output\stmf10x-demo.axf" - 0 Error(s), 25 Warning(s).
+.h(74): warning:  #1295-D: Deprecated declaration GSM_Device_Init - give arg types
+  uint8 GSM_Device_Init();
+.\hardware\inc\sim808.h(76): warning:  #1295-D: Deprecated declaration GSM_IO_WaitRecive - give arg types
+  uint8 GSM_IO_WaitRecive();
+user\main.c: 3 warnings, 0 errors
+compiling os_cpu_c.c...
+compiling os_core.c...
+compiling os_flag.c...
+compiling os_mbox.c...
+compiling os_mem.c...
+compiling os_mutex.c...
+compiling os_q.c...
+compiling os_sem.c...
+compiling os_task.c...
+compiling os_time.c...
+compiling os_tmr.c...
+linking...
+Program Size: Code=32788 RO-data=1128 RW-data=180 ZI-data=7340  
+FromELF: creating hex file...
+".\output\stmf10x-demo.axf" - 0 Error(s), 20 Warning(s).
