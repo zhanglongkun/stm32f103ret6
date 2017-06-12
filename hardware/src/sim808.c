@@ -220,6 +220,43 @@ sim_status GSM_Device_InitStep()
             gsmDeviceInfo.initStep++;
             break;
             
+        case GSM_AT_CIPMODE:
+            //设置透传模式
+            UsartPrintf(USART1, "AT+CIPMODE=1\r\n");
+            if (GSM_Device_SendCmd("AT+CIPMODE=1\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("设置透传失败");
+                return SIM_CIPMODE_ERR;
+            }
+            GSM_DBG("设置透传成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+        
+        case GSM_AT_CSTT:
+            //开始任务
+            UsartPrintf(USART1, "AT+CSTT=1\r\n");
+            if (GSM_Device_SendCmd("AT+CSTT=\"CMNET\"\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("开始任务失败");
+                return SIM_CSTT_ERR;
+            }
+            GSM_DBG("开始任务成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+
+        
+        case GSM_AT_CIICR:
+            //创建无线连接(GPRS或者CSD)
+            UsartPrintf(USART1, "AT+CIICR\r\n");
+            if (GSM_Device_SendCmd("AT+CIICR\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("创建无线连接失败");
+                return SIM_CIICR_ERR;
+            }
+            GSM_DBG("创建无线连接成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+#if 0
         case GSM_AT_CGDCONT:
             //设置PDP上下文,互联网接协议,接入点等信息
             UsartPrintf(USART1, "AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n");
@@ -243,6 +280,7 @@ sim_status GSM_Device_InitStep()
             
             gsmDeviceInfo.initStep++;
             break;
+#endif
 
         case GSM_AT_CIFSR:
             //获取IP地址
@@ -252,6 +290,7 @@ sim_status GSM_Device_InitStep()
                 return SIM_CIPCSGP_ERR;   
             }
             GSM_DBG("获取IP地址成功");
+            GSM_DBG("%s", gsmRevBuf.buf);
             
             gsmDeviceInfo.initStep++;
             break;

@@ -45,6 +45,9 @@ typedef enum
     SIM_CSQ_ERR,
     SIM_CGREG_ERR,
     SIM_CGATT_ERR,
+    SIM_CIPMODE_ERR,
+    SIM_CSTT_ERR,
+    SIM_CIICR_ERR,
     SIM_CGDCONT_ERR,
     SIM_CIPCSGP_ERR,
     SIM_CIPSTART_ERR
@@ -58,8 +61,13 @@ typedef enum
     GSM_AT_CSQ,
     GSM_AT_CGREG,
     GSM_AT_CGATT,
+    GSM_AT_CIPMODE,
+    GSM_AT_CSTT,
+    GSM_AT_CIICR,
+#if 0
     GSM_AT_CGDCONT,
     GSM_AT_CIPCSGP,
+#endif
     GSM_AT_CIFSR,
     GSM_AT_CIPSTART,
     GSM_AT_CIPSTATUS,
