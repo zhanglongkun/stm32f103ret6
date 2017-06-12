@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>stm32f103ret6</TargetName>
+      <TargetName>stm32f103ret</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -364,7 +364,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\core;.\fwlib\inc;.\hardware\inc;.\user;.\UCOSII\CONFIG;.\UCOSII\CORE;.\UCOSII\PORT</IncludePath>
+              <IncludePath>.\core;.\fwlib\inc;.\hardware\inc;.\UCOSII\CONFIG;.\UCOSII\CORE;.\UCOSII\PORT;.\user;.\protocol\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -446,6 +446,11 @@
               <FileName>stm32f10x_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\fwlib\src\stm32f10x_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fwlib\src\stm32f10x_usart.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_adc.c</FileName>
@@ -538,11 +543,6 @@
               <FilePath>.\fwlib\src\stm32f10x_tim.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\fwlib\src\stm32f10x_usart.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\fwlib\src\stm32f10x_wwdg.c</FilePath>
@@ -563,14 +563,14 @@
               <FilePath>.\hardware\src\delay.c</FilePath>
             </File>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hardware\src\adc.c</FilePath>
+              <FilePath>.\hardware\src\usart.c</FilePath>
             </File>
             <File>
-              <FileName>adxl345.c</FileName>
+              <FileName>key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hardware\src\adxl345.c</FilePath>
+              <FilePath>.\hardware\src\key.c</FilePath>
             </File>
             <File>
               <FileName>beep.c</FileName>
@@ -588,14 +588,19 @@
               <FilePath>.\hardware\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\hardware\src\key.c</FilePath>
-            </File>
-            <File>
               <FileName>sht20.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hardware\src\sht20.c</FilePath>
+            </File>
+            <File>
+              <FileName>adxl345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\adxl345.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\adc.c</FilePath>
             </File>
             <File>
               <FileName>tcrt5000.c</FileName>
@@ -603,9 +608,9 @@
               <FilePath>.\hardware\src\tcrt5000.c</FilePath>
             </File>
             <File>
-              <FileName>usart.c</FileName>
+              <FileName>hwtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hardware\src\usart.c</FilePath>
+              <FilePath>.\hardware\src\hwtimer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -617,21 +622,26 @@
               <FileType>1</FileType>
               <FilePath>.\user\main.c</FilePath>
             </File>
-            <File>
-              <FileName>manage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\user\manage.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>UCOSII</GroupName>
+          <GroupName>ucos/port</GroupName>
           <Files>
             <File>
               <FileName>os_cpu_c.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\UCOSII\PORT\os_cpu_c.c</FilePath>
             </File>
+            <File>
+              <FileName>os_cpu_a.asm</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\UCOSII\PORT\os_cpu_a.asm</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ucos/core</GroupName>
+          <Files>
             <File>
               <FileName>os_core.c</FileName>
               <FileType>1</FileType>
@@ -682,10 +692,20 @@
               <FileType>1</FileType>
               <FilePath>.\UCOSII\CORE\os_tmr.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>protocol</GroupName>
+          <Files>
             <File>
-              <FileName>os_cpu_a.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\UCOSII\PORT\os_cpu_a.asm</FilePath>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\protocol\src\modbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>pelco.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\protocol\src\pelco.c</FilePath>
             </File>
           </Files>
         </Group>

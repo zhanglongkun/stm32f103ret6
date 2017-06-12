@@ -1,3 +1,6 @@
----- usart1Buf Matches (2 in 2 files) ----
-main.c (Y:\stm32f103ret6\user):unsigned char usart1Buf[64];
-usart.c (Y:\stm32f103ret6\hardware\src):extern unsigned char usart1Buf[64];
+---- Modbus_Excep_Response Matches (2 in 1 files) ----
+modbus.c (Y:\stm32f103ret6\protocol\src):void Modbus_Excep_Response(uint8 function, uint8 exception)
+modbus.c (Y:\stm32f103ret6\protocol\src):            Modbus_Excep_Response(stmodbusInfo.function, FUNCTION_ERR);
+---- Modbus_Excep_Response Search Errors Encountered (1) ----
+The following 1 files could not be processed:
+Y:\stm32f103ret6\output\stmf10x-demo.build_log.htm : File could not be opened.

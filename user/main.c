@@ -17,7 +17,8 @@
 //os
 #include "includes.h"
 
-#include "manage.h"
+#include "modbus.h"
+#include "pelco.h"
 
 
 unsigned char usart1Buf[64];
@@ -34,6 +35,11 @@ OS_STK PELCO_D_TASK_STK[PELCO_D_STK_SIZE];
 #define CHECKTASK_TASK_PRI 8
 #define CHECKTASK_STK_SIZE 64
 OS_STK CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE];
+
+#define MODBUS_TASK_PRI 9
+#define MODBUS_STK_SIZE 512
+OS_STK MODBUS_TASK_STK[MODBUS_STK_SIZE];
+
 
 /**
   ******************************************************************************
@@ -93,6 +99,40 @@ static void Check_Stack_Task()
     }
 }
 
+void Modbus_Task()
+{
+    USART_IO_INFO usartRev;
+    unsigned short i = 0;
+    unsigned char buf[] = {0x01, 0x86, 0x02, 0xc3, 0xa1};
+    unsigned char buf1[] = {0x01, 0x06, 0x00, 0x04, 0x00, 0x00, 0xc8, 0x0b};
+        
+    while (1) {
+        if(Usart1_IO_WaitRecive() == REV_OK) {
+//            Modbus_Excep_Response(0x01, 0x06, 0x03);
+//            UsartPrintf(USART1, "buf = %s\r\n", usart1IOInfo.buf);
+
+            for (i = 0; i < usart1IOInfo.dataLenPre; i++) {
+                
+//                UsartPrintf(USART1, "%d ", usart1IOInfo.buf[i]);
+            }
+//            UsartPrintf(USART1, "\r\n");
+
+            memset(&usartRev, 0, sizeof(USART_IO_INFO));
+            memcpy(&usartRev, &usart1IOInfo, sizeof(USART_IO_INFO));
+//            while (1) {
+//                for (i = 0; i < 8; i++) {
+//                    
+//                    UsartPrintf(USART1, "0x%x\r\n", usartRev.buf[i]);
+//                }
+//                    DelayMs(2000);
+//            }
+            Modbus_Conversion_Handle(usartRev);
+            
+            memset(&usart1IOInfo, 0, sizeof(USART_IO_INFO));
+        }
+        OSTimeDly(2);
+    }
+}
 
 void Hardware_Init(void)
 {
@@ -124,27 +164,33 @@ int main(void)
     Hardware_Init();											//硬件初始化
     
     OSInit();
-    UsartPrintf(USART1, "11111111\r\n");
+//    UsartPrintf(USART1, "11111111\r\n");
 
+
+    
+    OSTaskCreate(Modbus_Task, (void *)0, &MODBUS_TASK_STK[MODBUS_STK_SIZE - 1], MODBUS_TASK_PRI);
+
+
+
+    
+#if 0
     OSTaskCreateExt(PELCO_D_Task, (void *)0, &PELCO_D_TASK_STK[PELCO_D_STK_SIZE - 1], PELCO_D_TASK_PRI,
                     PELCO_D_TASK_PRI, &PELCO_D_TASK_STK[0], PELCO_D_STK_SIZE, NULL, OS_TASK_OPT_STK_CHK);
     UsartPrintf(USART1, "222\r\n");
     
-#if 0
     OSTaskCreateExt(Check_Stack_Task, (void *)0, &CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE - 1], CHECKTASK_TASK_PRI,
                     CHECKTASK_TASK_PRI, &CHECKTASK_TASK_STK[0], CHECKTASK_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
-#endif
 
     OSTaskCreate(Check_Stack_Task, (void *)0, &CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE - 1], CHECKTASK_TASK_PRI);
-
+#endif
     
 #if 0
     //定时回调函数
     tmr = OSTmrCreate(100, 100, OS_TMR_OPT_PERIODIC, (OS_TMR_CALLBACK)NULL, 0, (INT8U *)"tmr1", &err);
     OSTmrStart(tmr, &err);
 #endif
-    UsartPrintf(USART1, "33\r\n");
+//    UsartPrintf(USART1, "33\r\n");
     OSStart();
-    UsartPrintf(USART1, "444\r\n");
+//    UsartPrintf(USART1, "444\r\n");
 }
 
