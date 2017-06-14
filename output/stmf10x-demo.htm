@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\output\stmf10x-demo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\output\stmf10x-demo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Mon Jun 12 11:41:40 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Wed Jun 14 10:02:44 2017
 <BR><P>
-<H3>Maximum Stack Usage =        568 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        552 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 Modbus_Task &rArr; Modbus_Conversion_Handle &rArr; Modbus_Manager &rArr; Modbus_Led_Set &rArr; Modbus_Excep_Response &rArr; Modbus_String_Send &rArr; Usart_SendString
 <P>
@@ -1398,8 +1398,8 @@ Global Symbols
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 
-<P><STRONG><a name="[e4]"></a>Modbus_Task</STRONG> (Thumb, 102 bytes, Stack size 408 bytes, main.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 568 + Unknown Stack Size
+<P><STRONG><a name="[e4]"></a>Modbus_Task</STRONG> (Thumb, 68 bytes, Stack size 392 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 552 + Unknown Stack Size
 <LI>Call Chain = Modbus_Task &rArr; Modbus_Conversion_Handle &rArr; Modbus_Manager &rArr; Modbus_Led_Set &rArr; Modbus_Excep_Response &rArr; Modbus_String_Send &rArr; Usart_SendString
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTimeDly

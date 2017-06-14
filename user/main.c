@@ -103,29 +103,13 @@ void Modbus_Task()
 {
     USART_IO_INFO usartRev;
     unsigned short i = 0;
-    unsigned char buf[] = {0x01, 0x86, 0x02, 0xc3, 0xa1};
-    unsigned char buf1[] = {0x01, 0x06, 0x00, 0x04, 0x00, 0x00, 0xc8, 0x0b};
         
     while (1) {
         if(Usart1_IO_WaitRecive() == REV_OK) {
-//            Modbus_Excep_Response(0x01, 0x06, 0x03);
-//            UsartPrintf(USART1, "buf = %s\r\n", usart1IOInfo.buf);
-
-            for (i = 0; i < usart1IOInfo.dataLenPre; i++) {
-                
-//                UsartPrintf(USART1, "%d ", usart1IOInfo.buf[i]);
-            }
-//            UsartPrintf(USART1, "\r\n");
 
             memset(&usartRev, 0, sizeof(USART_IO_INFO));
             memcpy(&usartRev, &usart1IOInfo, sizeof(USART_IO_INFO));
-//            while (1) {
-//                for (i = 0; i < 8; i++) {
-//                    
-//                    UsartPrintf(USART1, "0x%x\r\n", usartRev.buf[i]);
-//                }
-//                    DelayMs(2000);
-//            }
+
             Modbus_Conversion_Handle(usartRev);
             
             memset(&usart1IOInfo, 0, sizeof(USART_IO_INFO));
