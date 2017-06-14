@@ -12,7 +12,13 @@
 #ifndef _GSM_H_
 #define _GSM_H_
 
+
+#include <stdio.h>
+
 #include "usart.h"
+
+//OS
+#include "includes.h"
 
 #define GSM_IO USART2
 
@@ -45,6 +51,9 @@ typedef enum
     SIM_CSQ_ERR,
     SIM_CGREG_ERR,
     SIM_CGATT_ERR,
+    SIM_CIPMODE_ERR,
+    SIM_CSTT_ERR,
+    SIM_CIICR_ERR,
     SIM_CGDCONT_ERR,
     SIM_CIPCSGP_ERR,
     SIM_CIPSTART_ERR
@@ -58,13 +67,19 @@ typedef enum
     GSM_AT_CSQ,
     GSM_AT_CGREG,
     GSM_AT_CGATT,
+    GSM_AT_CIPMODE,
+    GSM_AT_CSTT,
+    GSM_AT_CIICR,
+#if 0
     GSM_AT_CGDCONT,
     GSM_AT_CIPCSGP,
+#endif
     GSM_AT_CIFSR,
     GSM_AT_CIPSTART,
     GSM_AT_CIPSTATUS,
     GSM_SUCCEED
 } gsm_init_step;
+
 
 
 void GSM_IO_Init();
@@ -82,6 +97,8 @@ void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len
 uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
 
 void GSM_IO_ClearRecive();
+
+void SIM808_QuitTrans(void);
 
 #endif  /* _GSM_H_ */
 

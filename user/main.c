@@ -12,9 +12,30 @@
 #include "adxl345.h"
 #include "sim808.h"
 
+//os
+#include "includes.h"
+
+
+#define TASK_PRI 5
 
 USART_IO_INFO usart1IOInfo = {0};
 USART_IO_INFO usart2IOInfo = {0};
+
+
+static void Check_Stack_Task()
+{
+    unsigned int ret;
+    OS_STK_DATA pelcoData;
+
+    while (1) {
+        ret = OSTaskStkChk(TASK_PRI, &pelcoData);
+
+        UsartPrintf(USART1, "ret = %d, free = %d, used = %d\r\n", ret, pelcoData.OSFree, pelcoData.OSUsed);
+        
+        OSTimeDly(10);
+    }
+}
+
 
 void Hardware_Init(void)
 {
@@ -33,6 +54,8 @@ void Hardware_Init(void)
     GSM_Init();
 
     IIC_Init();
+
+    RTOS_TimerInit();
 
     ADXL345_Init();
 }

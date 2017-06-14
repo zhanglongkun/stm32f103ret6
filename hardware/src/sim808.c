@@ -9,7 +9,6 @@
   */ 
 
 
-#include <stdio.h>
 
 #include "sim808.h"
 
@@ -189,7 +188,7 @@ sim_status GSM_Device_InitStep()
             UsartPrintf(USART1, "AT+CSQ\r\n");
             if (GSM_Device_SendCmd("AT+CSQ\r\n","OK", &gsmRevBuf)) {
                 GSM_DBG("查询信号强度失败");
-                return SIM_CSQ_ERR;	
+                return SIM_CSQ_ERR; 
             }
             GSM_DBG("查询信号强度成功");
             
@@ -220,6 +219,43 @@ sim_status GSM_Device_InitStep()
             gsmDeviceInfo.initStep++;
             break;
             
+        case GSM_AT_CIPMODE:
+            //设置透传模式
+            UsartPrintf(USART1, "AT+CIPMODE=1\r\n");
+            if (GSM_Device_SendCmd("AT+CIPMODE=1\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("设置透传失败");
+                return SIM_CIPMODE_ERR;
+            }
+            GSM_DBG("设置透传成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+        
+        case GSM_AT_CSTT:
+            //开始任务
+            UsartPrintf(USART1, "AT+CSTT=1\r\n");
+            if (GSM_Device_SendCmd("AT+CSTT=\"CMNET\"\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("开始任务失败");
+                return SIM_CSTT_ERR;
+            }
+            GSM_DBG("开始任务成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+
+        
+        case GSM_AT_CIICR:
+            //创建无线连接(GPRS或者CSD)
+            UsartPrintf(USART1, "AT+CIICR\r\n");
+            if (GSM_Device_SendCmd("AT+CIICR\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("创建无线连接失败");
+                return SIM_CIICR_ERR;
+            }
+            GSM_DBG("创建无线连接成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+#if 0
         case GSM_AT_CGDCONT:
             //设置PDP上下文,互联网接协议,接入点等信息
             UsartPrintf(USART1, "AT+CGDCONT=1,\"IP\",\"CMNET\"\r\n");
@@ -231,7 +267,6 @@ sim_status GSM_Device_InitStep()
             
             gsmDeviceInfo.initStep++;
             break;
-
         case GSM_AT_CIPCSGP:
             //设置为GPRS连接模式
             UsartPrintf(USART1, "AT+CIPCSGP=1,\"CMNET\"\r\n");
@@ -243,6 +278,7 @@ sim_status GSM_Device_InitStep()
             
             gsmDeviceInfo.initStep++;
             break;
+#endif
 
         case GSM_AT_CIFSR:
             //获取IP地址
@@ -252,6 +288,7 @@ sim_status GSM_Device_InitStep()
                 return SIM_CIPCSGP_ERR;   
             }
             GSM_DBG("获取IP地址成功");
+            GSM_DBG("%s", gsmRevBuf.buf);
             
             gsmDeviceInfo.initStep++;
             break;
@@ -265,7 +302,7 @@ sim_status GSM_Device_InitStep()
             strcat(cfgBuffer, "\",");
             strcat(cfgBuffer, serviceInfo.port);
             strcat(cfgBuffer, "\r\n");
-            UsartPrintf(USART1, "STA Tips:	%s", cfgBuffer);
+            UsartPrintf(USART1, "STA Tips:  %s", cfgBuffer);
             
             if (GSM_Device_SendCmd(cfgBuffer, "CONNECT", &gsmRevBuf)) {
                 GSM_DBG("连接服务器失败");
@@ -300,6 +337,7 @@ sim_status GSM_Device_InitStep()
 
     return SIM_COMTINUE;
 }
+
 
 
 /**
@@ -418,6 +456,33 @@ uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
     GSM_IO_ClearRecive();
 
     return 1;
+}
+
+
+/**
+  ******************************************************************************
+  * Function:     SIM808_QuitTrans()
+  * Description:  退出透传模式
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-06-14
+  ******************************************************************************
+  */ 
+void SIM808_QuitTrans(void)
+{
+    while((GSM_IO->SR & 0X40) == 0);	//等待发送空
+    GSM_IO->DR = '+';
+    OSTimeDly(3); 					//大于串口组帧时间(10ms)
+
+    while((GSM_IO->SR & 0X40) == 0);	//等待发送空
+    GSM_IO->DR = '+';        
+    OSTimeDly(3); 					//大于串口组帧时间(10ms)
+
+    while((GSM_IO->SR & 0X40) == 0);	//等待发送空
+    GSM_IO->DR = '+';        
+    OSTimeDly(20);					//等待100ms
+
+    GSM_Device_SendCmd("AT+CMMODE=0\r\n","OK", 1);	//关闭透传模式
 }
 
 
