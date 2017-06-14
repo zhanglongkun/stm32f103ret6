@@ -40,6 +40,7 @@
 ".\output\hwtimer.o"
 ".\output\sim808.o"
 ".\output\main.o"
+".\output\user.o"
 ".\output\os_cpu_c.o"
 ".\output\os_cpu_a.o"
 ".\output\os_core.o"

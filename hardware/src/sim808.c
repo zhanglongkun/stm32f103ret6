@@ -164,16 +164,16 @@ sim_status GSM_Device_InitStep()
             //网络注册及状态查询
             UsartPrintf(USART1, "AT+CREG?\r\n");
             if (GSM_Device_SendCmd("AT+CREG?\r\n", "0,1", &gsmRevBuf)) {
-                if (strstr(&gsmRevBuf.buf, "0,0")) {
+                if (strstr((const char *)&gsmRevBuf.buf, "0,0")) {
                     GSM_DBG("未注册，终端当前并未在搜寻新的运营商");
                 }
-                if (strstr(&gsmRevBuf.buf, "0,2")) {
+                if (strstr((const char *)&gsmRevBuf.buf, "0,2")) {
                     GSM_DBG("未注册，终端正在搜寻基站");
                 }
-                if (strstr(&gsmRevBuf.buf, "0,4")) {
+                if (strstr((const char *)&gsmRevBuf.buf, "0,4")) {
                     GSM_DBG("未知代码");
                 }
-                if (strstr(&gsmRevBuf.buf, "0,5")) {
+                if (strstr((const char *)&gsmRevBuf.buf, "0,5")) {
                     GSM_DBG("已注册，处于漫游状态");
                 }
                 return SIM_CREG_ERR;
@@ -482,7 +482,7 @@ void SIM808_QuitTrans(void)
     GSM_IO->DR = '+';        
     OSTimeDly(20);					//等待100ms
 
-    GSM_Device_SendCmd("AT+CMMODE=0\r\n","OK", 1);	//关闭透传模式
+    GSM_Device_SendCmd("AT+CMMODE=0\r\n","OK", NULL);	//关闭透传模式
 }
 
 

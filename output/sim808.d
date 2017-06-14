@@ -1,6 +1,6 @@
 .\output\sim808.o: hardware\src\sim808.c
-.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
 .\output\sim808.o: .\hardware\inc\sim808.h
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
 .\output\sim808.o: .\hardware\inc\usart.h
 .\output\sim808.o: .\core\stm32f10x.h
 .\output\sim808.o: .\core\core_cm3.h
@@ -31,3 +31,11 @@
 .\output\sim808.o: .\fwlib\inc\stm32f10x_usart.h
 .\output\sim808.o: .\fwlib\inc\stm32f10x_wwdg.h
 .\output\sim808.o: .\fwlib\inc\misc.h
+.\output\sim808.o: .\UCOSII\CONFIG\includes.h
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\string.h
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\ctype.h
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdlib.h
+.\output\sim808.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdarg.h
+.\output\sim808.o: .\UCOSII\CORE\ucos_ii.h
+.\output\sim808.o: .\UCOSII\CONFIG\os_cfg.h
+.\output\sim808.o: .\UCOSII\PORT\os_cpu.h

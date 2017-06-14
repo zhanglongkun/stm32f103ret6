@@ -81,6 +81,9 @@ typedef enum
 } gsm_init_step;
 
 
+extern GSM_DEVICE_INFO gsmDeviceInfo;
+
+
 
 void GSM_IO_Init();
 

@@ -37,3 +37,12 @@
 .\output\main.o: .\hardware\inc\i2c.h
 .\output\main.o: .\hardware\inc\adxl345.h
 .\output\main.o: .\hardware\inc\sim808.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdio.h
+.\output\main.o: .\UCOSII\CONFIG\includes.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\string.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\ctype.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdlib.h
+.\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdarg.h
+.\output\main.o: .\UCOSII\CORE\ucos_ii.h
+.\output\main.o: .\UCOSII\CONFIG\os_cfg.h
+.\output\main.o: .\UCOSII\PORT\os_cpu.h

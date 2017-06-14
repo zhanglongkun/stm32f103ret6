@@ -16,10 +16,21 @@
 #include "includes.h"
 
 
-#define TASK_PRI 5
-
 USART_IO_INFO usart1IOInfo = {0};
 USART_IO_INFO usart2IOInfo = {0};
+
+
+//任务堆栈计算
+#define CHECKTASK_TASK_PRI    8
+#define CHECKTASK_STK_SIZE    64
+OS_STK CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE];
+
+
+//网络初始化任务
+#define NET_TASK_PRIO		 13 
+#define NET_STK_SIZE		 256
+OS_STK NET_TASK_STK[NET_STK_SIZE];
+
 
 
 static void Check_Stack_Task()
@@ -28,12 +39,18 @@ static void Check_Stack_Task()
     OS_STK_DATA pelcoData;
 
     while (1) {
-        ret = OSTaskStkChk(TASK_PRI, &pelcoData);
+        ret = OSTaskStkChk(CHECKTASK_TASK_PRI, &pelcoData);
 
         UsartPrintf(USART1, "ret = %d, free = %d, used = %d\r\n", ret, pelcoData.OSFree, pelcoData.OSUsed);
         
         OSTimeDly(10);
     }
+}
+
+
+void Net_Task()
+{
+    
 }
 
 
@@ -66,6 +83,16 @@ int main(void)
     Hardware_Init();											//硬件初始化
 
     GSM_Device_Init();
+
+    
+
+
+    
+#if 0
+   OSTaskCreateExt(Check_Stack_Task, (void *)0, &CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE - 1], CHECKTASK_TASK_PRI,
+                   CHECKTASK_TASK_PRI, &CHECKTASK_TASK_STK[0], CHECKTASK_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
+#endif
+    
 
 #if 0
     SHT20_INFO sht20;
