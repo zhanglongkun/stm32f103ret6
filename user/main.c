@@ -15,6 +15,7 @@
 //os
 #include "includes.h"
 
+#include "user.h"
 
 USART_IO_INFO usart1IOInfo = {0};
 USART_IO_INFO usart2IOInfo = {0};
@@ -27,9 +28,15 @@ OS_STK CHECKTASK_TASK_STK[CHECKTASK_STK_SIZE];
 
 
 //网络初始化任务
-#define NET_TASK_PRIO		 13 
+#define NET_TASK_PRIO		 9 
 #define NET_STK_SIZE		 256
 OS_STK NET_TASK_STK[NET_STK_SIZE];
+
+
+//心跳任务
+#define HEAD_TASK_PRIO		 10 
+#define HEAD_STK_SIZE		 256
+OS_STK HEAD_TASK_STK[HEAD_STK_SIZE];
 
 
 
@@ -50,9 +57,16 @@ static void Check_Stack_Task()
 
 void Net_Task()
 {
-    
+    Net_Connect();
 }
 
+
+void Head_Task()
+{
+    while (1) {
+        Heart_Data_Send();
+    }
+}
 
 void Hardware_Init(void)
 {
@@ -85,6 +99,8 @@ int main(void)
     GSM_Device_Init();
 
     
+    OSTaskCreateExt(Net_Task, (void *)0, &NET_TASK_STK[NET_STK_SIZE - 1], CHECKTASK_TASK_PRI,
+                    CHECKTASK_TASK_PRI, &NET_TASK_STK[0], NET_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
 
 
     

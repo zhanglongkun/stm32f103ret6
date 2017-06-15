@@ -40,6 +40,11 @@ void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short 
 
 void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...);
 
+_Bool Usart1_IO_WaitRecive(void);
+
+_Bool Usart2_IO_WaitRecive(void);
+
+void Usart2_Send_Cmd(unsigned char *str, unsigned short len);
 
 
 #endif  /* __USART_H */

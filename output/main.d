@@ -46,3 +46,4 @@
 .\output\main.o: .\UCOSII\CORE\ucos_ii.h
 .\output\main.o: .\UCOSII\CONFIG\os_cfg.h
 .\output\main.o: .\UCOSII\PORT\os_cpu.h
+.\output\main.o: user\user.h

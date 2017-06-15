@@ -85,23 +85,28 @@ extern GSM_DEVICE_INFO gsmDeviceInfo;
 
 
 
-void GSM_IO_Init();
+void GSM_IO_Init(void);
 
-void GSM_Init();
+void GSM_Init(void);
 
-sim_status GSM_Device_Check();
+sim_status GSM_Device_Check(void);
 
-uint8 GSM_Device_Init();
+uint8 GSM_Device_Init(void);
 
-uint8 GSM_IO_WaitRecive();
+uint8 GSM_IO_WaitRecive(void);
 
-void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len);
+void GSM_SendString(unsigned char *str, unsigned char len);
 
 uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
 
-void GSM_IO_ClearRecive();
+void GSM_IO_ClearRecive(void);
 
 void SIM808_QuitTrans(void);
+
+uint8 GSM_Device_Exist(void);
+
+
+
 
 #endif  /* _GSM_H_ */
 

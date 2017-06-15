@@ -40,7 +40,7 @@ SERVICE_INFO serviceInfo = {"183.230.40.39", "876"};
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-void GSM_IO_Init()
+void GSM_IO_Init(void)
 {
     GPIO_InitTypeDef gpioInitStruct;
     USART_InitTypeDef usartInitStruct;
@@ -94,7 +94,7 @@ void GSM_IO_Init()
   * Others:       add by zlk, 2017-06-06
   ******************************************************************************
   */ 
-void GSM_Init()
+void GSM_Init(void)
 {
     GPIO_InitTypeDef gpioInitStruct;
 
@@ -130,7 +130,7 @@ void GSM_Init()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-sim_status GSM_Device_InitStep()
+sim_status GSM_Device_InitStep(void)
 {
     USART_IO_INFO gsmRevBuf = {0};
     char cfgBuffer[32] = {0};
@@ -349,7 +349,7 @@ sim_status GSM_Device_InitStep()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-uint8 GSM_Device_Init()
+uint8 GSM_Device_Init(void)
 {
     sim_status res = 1;
 
@@ -369,7 +369,7 @@ uint8 GSM_Device_Init()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-uint8 GSM_IO_WaitRecive()
+uint8 GSM_IO_WaitRecive(void)
 {
     if(usart2IOInfo.dataLen == 0) //如果接收计数为0 则说明没有处于接收数据中，所以直接跳出，结束函数
         return REV_WAIT;
@@ -396,7 +396,7 @@ uint8 GSM_IO_WaitRecive()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-void GSM_IO_ClearRecive()
+void GSM_IO_ClearRecive(void)
 {
     usart2IOInfo.dataLen = 0;
 
@@ -413,14 +413,14 @@ void GSM_IO_ClearRecive()
   * Others:       add by zlk, 2017-06-01
   ******************************************************************************
   */ 
-void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len)
+void GSM_SendString(unsigned char *str, unsigned char len)
 {
     unsigned short count = 0;
 
     for(; count < len; count++)
     {
-        USART_SendData(USARTx, *str++);									//发送数据
-        while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET);		//等待发送完成
+        USART_SendData(GSM_IO, *str++);									//发送数据
+        while(USART_GetFlagStatus(GSM_IO, USART_FLAG_TC) == RESET);		//等待发送完成
     }
 }
 
@@ -438,7 +438,7 @@ uint8 GSM_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
 {
     unsigned char timeout = 300;
     
-    GSM_SendString(GSM_IO, (uint8 *)cmd, strlen((uint8 *)cmd));
+    GSM_SendString((uint8 *)cmd, strlen((uint8 *)cmd));
 
     while (timeout--) {
         if (GSM_IO_WaitRecive() == REV_OK) {
@@ -486,3 +486,23 @@ void SIM808_QuitTrans(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     GSM_Device_Exist()
+  * Description:  描述
+  * Parameter:    参数
+  * Return:       返回值
+  * Others:       add by zlk, 2017-06-15
+  ******************************************************************************
+  */ 
+uint8 GSM_Device_Exist(void)
+{
+    //检测模块是否正常
+    UsartPrintf(USART1, "AT\r\n");
+    if (GSM_Device_SendCmd("AT\r\n", "OK",  NULL)) {
+        GSM_DBG("未检测到模块");
+        return 1;
+    }
+    GSM_DBG("GSM模块正常");
+    return 0;
+}

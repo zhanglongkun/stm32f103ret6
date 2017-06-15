@@ -588,11 +588,6 @@
               <FilePath>.\hardware\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>sht20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\hardware\src\sht20.c</FilePath>
-            </File>
-            <File>
               <FileName>adxl345.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hardware\src\adxl345.c</FilePath>
@@ -612,6 +607,21 @@
               <FileType>1</FileType>
               <FilePath>.\hardware\src\hwtimer.c</FilePath>
             </File>
+            <File>
+              <FileName>sim808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\sim808.c</FilePath>
+            </File>
+            <File>
+              <FileName>esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>sht20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\sht20.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -621,6 +631,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\user\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\user.c</FilePath>
             </File>
           </Files>
         </Group>
