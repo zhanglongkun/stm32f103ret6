@@ -23,14 +23,12 @@ NET_WORK_INFO netWorkInfo = {NETWORK_ERR};
 DEVICE_DATA_TYPE deviceDataType = {DEVICE_CMD_MODE};
 
 
-
-
 /**
   ******************************************************************************
   * Function:     Heart_Data_Send()
-  * Description:  描述
-  * Parameter:    参数
-  * Return:       返回值
+  * Description:  心跳包
+  * Parameter:    void
+  * Return:       0 --设备正常，
   * Others:       add by zlk, 2017-06-15
   ******************************************************************************
   */ 
@@ -40,28 +38,43 @@ uint8 Heart_Data_Send(void)
     uint8 heartBuf[] = "heart data";
     uint8 sCount = 5;
     uint8 *revBuf = NULL;
+    uint8 status;
 
-    
-    if ((NETWORK_OK != netWorkInfo.netWork) || (DEVICE_DATA_MODE != deviceDataType.dataType)) {
-        return 1;
-    }
-
-    Net_Device_Set_DataMode(DEVICE_HEART_MODE);
-
-    while (sCount--) {
-        Net_Device_SendData(heartBuf, sizeof(heartBuf));
-
-        ret = Net_Device_GetData(revBuf);
-        if (ret) {
-            USER_DBG("未获取到服务器数据");
+    while (1) {
+        if ((NETWORK_OK != netWorkInfo.netWork) || (DEVICE_DATA_MODE != deviceDataType.dataType)) {
+            USER_DBG("not in device_data_mode");
             return 1;
         }
-    }
 
-    Net_Device_Set_DataMode(DEVICE_DATA_MODE);
+        sCount = 5;
+        
+        Net_Device_Set_DataMode(DEVICE_HEART_MODE);
 
-    if (NULL != revBuf) {
-        free(revBuf);
+        while (sCount--) {
+            Net_Device_SendData(heartBuf, sizeof(heartBuf));
+
+            ret = Net_Device_GetData(revBuf);
+            if (ret) {
+                USER_DBG("未获取到服务器数据");
+            }
+        }
+
+        if (0 == sCount) {
+           status = Net_Connect_Check();
+           if (status) {
+                USER_DBG("已关闭连接");
+                netWorkInfo.netWork = NETWORK_ERR;
+           }
+        }
+
+        Net_Device_Set_DataMode(DEVICE_DATA_MODE);
+
+        if (NULL != revBuf) {
+            free(revBuf);
+            revBuf = NULL;
+        }
+
+        OSTimeDlyHMSM(0, 0, 20, 0);
     }
     
     return 0;
@@ -71,9 +84,9 @@ uint8 Heart_Data_Send(void)
 /**
   ******************************************************************************
   * Function:     Data_Receive()
-  * Description:  描述
-  * Parameter:    参数
-  * Return:       返回值
+  * Description:  数据接收
+  * Parameter:    void
+  * Return:       void
   * Others:       add by zlk, 2017-06-16
   ******************************************************************************
   */ 
@@ -95,9 +108,9 @@ void Data_Receive(void)
 /**
   ******************************************************************************
   * Function:     Net_Device_SendData()
-  * Description:  描述
-  * Parameter:    参数
-  * Return:       返回值
+  * Description:  数据发送
+  * Parameter:    data --发送的数据指针，len --数据大小
+  * Return:       void
   * Others:       add by zlk, 2017-06-15
   ******************************************************************************
   */ 
@@ -130,9 +143,9 @@ void Net_Device_SendData(unsigned char *data, unsigned short len)
 /**
   ******************************************************************************
   * Function:     Net_Device_GetData()
-  * Description:  描述
-  * Parameter:    参数
-  * Return:       返回值
+  * Description:  数据接收
+  * Parameter:    revBuf --接收的数据
+  * Return:       0 --获取成功，1 --未获取到数据
   * Others:       add by zlk, 2017-06-16
   ******************************************************************************
   */ 
@@ -163,7 +176,7 @@ uint8 Net_Device_GetData(uint8 *revBuf)
 /**
   ******************************************************************************
   * Function:     Net_Connect()
-  * Description:  描述
+  * Description:  连接服务器
   * Parameter:    void
   * Return:       void
   * Others:       add by zlk, 2017-06-14
@@ -171,13 +184,19 @@ uint8 Net_Device_GetData(uint8 *revBuf)
   */ 
 void Net_Connect(void)
 {
+    int ret;
     GSM_IO_Init();
     Net_Device_Set_DataMode(DEVICE_CMD_MODE);
 
     while (1) {
         if ((NETWORK_ERR == netWorkInfo.netWork) && (DEV_OK == checkDeviceInfo.netDeviceStatus)) {
             Net_Device_Set_DataMode(DEVICE_CMD_MODE);
-            GSM_Device_Init();
+            
+            ret = GSM_Device_Init();
+            if (!ret) {
+                netWorkInfo.netWork = NETWORK_OK;
+            }
+            
             Net_Device_Set_DataMode(DEVICE_DATA_MODE);
         }
 
@@ -196,10 +215,65 @@ void Net_Connect(void)
 
 /**
   ******************************************************************************
-  * Function:     NET_DEVICE_Set_DataMode()
-  * Description:  描述
+  * Function:     Net_Connect_Check()
+  * Description:  检测是否与服务器连接正常
   * Parameter:    void
-  * Return:       返回值
+  * Return:       void
+  * Others:       add by zlk, 2017-06-17
+  ******************************************************************************
+  */ 
+uint8 Net_Connect_Check(void)
+{
+    USART_IO_INFO revBuf = {0};
+
+    GSM_IO_ClearRecive();
+
+    if (GSM_Device_SendCmd("AT+CIPSTATUS\r\n", "TCP CLOSED", &revBuf)) {
+        USER_DBG("service is close, revce buffer:%s", revBuf.buf);
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/**
+  ******************************************************************************
+  * Function:     Data_Process()
+  * Description:  处理平台下发的数据
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-06-17
+  ******************************************************************************
+  */ 
+void Data_Process(void)
+{
+    uint8 ret;
+    uint8 sendBuf[] = "I receive the data";
+    USART_IO_INFO *revBuf = NULL;
+    
+    while (1) {
+        if ((NETWORK_OK== netWorkInfo.netWork) && (DEVICE_DATA_MODE == deviceDataType.dataType)) {
+            memset(&revBuf, 0, sizeof(USART_IO_INFO));
+            
+            ret = Net_Device_GetData((uint8 *)revBuf);
+            if (0 != revBuf) {
+                USER_DBG("receive buffer = %s", revBuf->buf);
+                Net_Device_SendData(sendBuf, sizeof(sendBuf));
+            }
+        }
+
+        OSTimeDly(2);
+    }
+}
+
+
+/**
+  ******************************************************************************
+  * Function:     NET_DEVICE_Set_DataMode()
+  * Description:  模式设置
+  * Parameter:    void
+  * Return:       void
   * Others:       add by zlk, 2017-06-15
   ******************************************************************************
   */ 
@@ -214,9 +288,9 @@ void Net_Device_Set_DataMode(unsigned char mode)
 /**
   ******************************************************************************
   * Function:     NET_DEVICE_Get_DataMode()
-  * Description:  描述
+  * Description:  模式获取
   * Parameter:    void
-  * Return:       返回值
+  * Return:       当前模式状态
   * Others:       add by zlk, 2017-06-15
   ******************************************************************************
   */ 

@@ -357,6 +357,8 @@ uint8 GSM_Device_Init(void)
         res = GSM_Device_InitStep();
         DelayMs(1000);
     }
+
+    return 0;
 }
 
 

@@ -65,6 +65,10 @@ uint8 Net_Device_GetData(uint8 *revBuf);
 
 void Net_Connect(void);
 
+uint8 Net_Connect_Check(void);
+
+void Data_Process(void);
+
 void Net_Device_Set_DataMode(unsigned char mode);
 
 unsigned char Net_Device_Get_DataMode(void);
