@@ -607,6 +607,11 @@
               <FileType>1</FileType>
               <FilePath>.\hardware\src\tcrt5000.c</FilePath>
             </File>
+            <File>
+              <FileName>hwtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\hwtimer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -616,11 +621,6 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\user\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>manage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\user\manage.c</FilePath>
             </File>
           </Files>
         </Group>
