@@ -19,6 +19,16 @@
 
 #include "usart.h"
 
+
+#define ESP8266_IO USART2
+
+typedef struct
+{
+    char ip[16];
+    char port[8];
+} SERVICE_INFO;
+
+
 typedef unsigned char uint8;
 
 typedef struct 
@@ -56,6 +66,19 @@ uint8 ESP8266_Device_InitStep();
 
 void ESP8266_Device_Init();
 
+uint8 ESP8266_IO_WaitRecive(void);
+
+uint8 ESP8266_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
+
+void ESP8266_IO_ClearRecive(void);
+
+void ESP8266_SendString(unsigned char *str, unsigned char len);
+
+void ESP8266_QuitTrans(void);
+
+void ESP8266_EnterTrans(void);
+
+void NET_DEVICE_Reset(void);
 
 #endif  /* _ESP8266_H_ */
 
