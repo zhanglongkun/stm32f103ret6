@@ -23,11 +23,6 @@
 
 
 GSM_DEVICE_INFO gsmDeviceInfo = {0};
-#if 0
-SERVICE_INFO serviceInfo = {"106.75.148.220", "6666"};
-#endif
-
-SERVICE_INFO serviceInfo = {"183.230.40.39", "876"};
 
 
 
@@ -132,8 +127,8 @@ void GSM_Init(void)
   */ 
 sim_status GSM_Device_InitStep(void)
 {
-    USART_IO_INFO gsmRevBuf = {0};
     char cfgBuffer[32] = {0};
+    USART_IO_INFO gsmRevBuf = {0};
     
     switch (gsmDeviceInfo.initStep) {
         case GSM_AT:
@@ -187,7 +182,7 @@ sim_status GSM_Device_InitStep(void)
             //查询信号强度
             UsartPrintf(USART1, "AT+CSQ\r\n");
             if (GSM_Device_SendCmd("AT+CSQ\r\n","OK", &gsmRevBuf)) {
-                GSM_DBG("查询信号强度失败");
+                GSM_DBG("查询信号强度失败, buf = %s", gsmRevBuf.buf);
                 return SIM_CSQ_ERR; 
             }
             GSM_DBG("查询信号强度成功");
@@ -199,7 +194,7 @@ sim_status GSM_Device_InitStep(void)
             //检查网络注册状态
             UsartPrintf(USART1, "AT+CGREG?\r\n");
             if (GSM_Device_SendCmd("AT+CGREG?\r\n","OK", &gsmRevBuf)) {
-                GSM_DBG("注册失败");
+                GSM_DBG("注册失败, buf = %s", gsmRevBuf.buf);
                 return SIM_CGREG_ERR;
             }
             GSM_DBG("网络注册正常");
@@ -211,7 +206,7 @@ sim_status GSM_Device_InitStep(void)
             //附着GPRS业务
             UsartPrintf(USART1, "AT+CGATT=1\r\n");
             if (GSM_Device_SendCmd("AT+CGATT=1\r\n", "OK", &gsmRevBuf)) {
-                GSM_DBG("附着GPRS业务失败");
+                GSM_DBG("附着GPRS业务失败, buf = %s", gsmRevBuf.buf);
                 return SIM_CGATT_ERR;
             }
             GSM_DBG("附着GPRS业务");
@@ -219,14 +214,38 @@ sim_status GSM_Device_InitStep(void)
             gsmDeviceInfo.initStep++;
             break;
             
+        case GSM_AT_CIPHEAD:
+            //设置ip报头
+            UsartPrintf(USART1, "AT+CIPHEAD=1\r\n");
+            if (GSM_Device_SendCmd("AT+CIPHEAD=1\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("增加IP报头失败,buf = %d", gsmRevBuf.buf);
+                return SIM_CIPHEAD_ERR;
+            }
+            GSM_DBG("设置IP报头成功");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+        
         case GSM_AT_CIPMODE:
             //设置透传模式
-            UsartPrintf(USART1, "AT+CIPMODE=1\r\n");
-            if (GSM_Device_SendCmd("AT+CIPMODE=1\r\n", "OK", &gsmRevBuf)) {
-                GSM_DBG("设置透传失败");
+            UsartPrintf(USART1, "AT+CIPMODE=0\r\n");
+            if (GSM_Device_SendCmd("AT+CIPMODE=0\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("设置不透传失败,buf = %d", gsmRevBuf.buf);
                 return SIM_CIPMODE_ERR;
             }
-            GSM_DBG("设置透传成功");
+            GSM_DBG("设置不透传");
+            
+            gsmDeviceInfo.initStep++;
+            break;
+
+        case GSM_AT_CIPSHUT:
+            //
+            UsartPrintf(USART1, "AT+CIPSHUT\r\n");
+            if (GSM_Device_SendCmd("AT+CIPSHUT\r\n", "OK", &gsmRevBuf)) {
+                GSM_DBG("失败,buf = %d", gsmRevBuf.buf);
+                return SIM_CIPSHUT_ERR;
+            }
+            GSM_DBG("成功");
             
             gsmDeviceInfo.initStep++;
             break;
@@ -235,7 +254,7 @@ sim_status GSM_Device_InitStep(void)
             //开始任务
             UsartPrintf(USART1, "AT+CSTT=1\r\n");
             if (GSM_Device_SendCmd("AT+CSTT=\"CMNET\"\r\n", "OK", &gsmRevBuf)) {
-                GSM_DBG("开始任务失败");
+                GSM_DBG("开始任务失败, buf = %s", gsmRevBuf.buf);
                 return SIM_CSTT_ERR;
             }
             GSM_DBG("开始任务成功");
@@ -248,12 +267,12 @@ sim_status GSM_Device_InitStep(void)
             //创建无线连接(GPRS或者CSD)
             UsartPrintf(USART1, "AT+CIICR\r\n");
             if (GSM_Device_SendCmd("AT+CIICR\r\n", "OK", &gsmRevBuf)) {
-                GSM_DBG("创建无线连接失败");
+                GSM_DBG("创建无线连接失败, buf = %s", gsmRevBuf.buf);
                 return SIM_CIICR_ERR;
             }
             GSM_DBG("创建无线连接成功");
-            
             gsmDeviceInfo.initStep++;
+            
             break;
 #if 0
         case GSM_AT_CGDCONT:
@@ -289,38 +308,6 @@ sim_status GSM_Device_InitStep(void)
             }
             GSM_DBG("获取IP地址成功");
             GSM_DBG("%s", gsmRevBuf.buf);
-            
-            gsmDeviceInfo.initStep++;
-            break;
-
-        case GSM_AT_CIPSTART:
-            //连接服务器
-            memset(cfgBuffer, 0, sizeof(cfgBuffer));
-
-            strcpy(cfgBuffer, "AT+CIPSTART=\"TCP\",\"");
-            strcat(cfgBuffer, serviceInfo.ip);
-            strcat(cfgBuffer, "\",");
-            strcat(cfgBuffer, serviceInfo.port);
-            strcat(cfgBuffer, "\r\n");
-            UsartPrintf(USART1, "STA Tips:  %s", cfgBuffer);
-            
-            if (GSM_Device_SendCmd(cfgBuffer, "CONNECT", &gsmRevBuf)) {
-                GSM_DBG("连接服务器失败");
-                return SIM_CIPSTART_ERR;   
-            }
-            GSM_DBG("连接服务器成功");
-            
-            gsmDeviceInfo.initStep++;
-            break;
-
-        case GSM_AT_CIPSTATUS:
-            //状态查询
-            UsartPrintf(USART1, "AT+CIPSTATUS\r\n");
-            if (GSM_Device_SendCmd("AT+CIPSTATUS\r\n", "CONNECT OK", &gsmRevBuf)) {
-                GSM_DBG("服务器未连接");
-                return SIM_CIPSTART_ERR;   
-            }
-            GSM_DBG("以正常连接服务器");
             
             gsmDeviceInfo.initStep++;
             break;
@@ -499,12 +486,50 @@ void SIM808_QuitTrans(void)
   */ 
 uint8 GSM_Device_Exist(void)
 {
+    USART_IO_INFO gsmRevBuf = {0};
+    
     //检测模块是否正常
     UsartPrintf(USART1, "AT\r\n");
-    if (GSM_Device_SendCmd("AT\r\n", "OK",  NULL)) {
+    if (GSM_Device_SendCmd("AT\r\n", "OK",  &gsmRevBuf)) {
         GSM_DBG("未检测到模块");
         return 1;
     }
     GSM_DBG("GSM模块正常");
     return 0;
+}
+
+
+uint8 Service_Connect(uint8 *ip, uint8 *port)
+{
+    char cfgBuffer[32] = {0};
+    USART_IO_INFO gsmRevBuf = {0};
+
+    while (1) {
+        //连接服务器
+        memset(cfgBuffer, 0, sizeof(cfgBuffer));
+        memset(&gsmRevBuf, 0, sizeof(gsmRevBuf));
+
+        strcpy(cfgBuffer, "AT+CIPSTART=\"TCP\",\"");
+        strcat(cfgBuffer, ip);
+        strcat(cfgBuffer, "\",");
+        strcat(cfgBuffer, port);
+        strcat(cfgBuffer, "\r\n");
+        UsartPrintf(USART1, "STA Tips:  %s", cfgBuffer);
+        
+        if (GSM_Device_SendCmd(cfgBuffer, "CONNECT", &gsmRevBuf)) {
+            GSM_DBG("连接服务器失败");
+            continue;   
+        }
+        GSM_DBG("连接服务器成功");
+        
+        //状态查询
+        UsartPrintf(USART1, "AT+CIPSTATUS\r\n");
+        if (GSM_Device_SendCmd("AT+CIPSTATUS\r\n", "CONNECT OK", &gsmRevBuf)) {
+            GSM_DBG("buf = %s", gsmRevBuf.buf);
+            GSM_DBG("服务器未连接");
+            continue;   
+        }
+        GSM_DBG("以正常连接服务器");
+        return 0;
+    }
 }
