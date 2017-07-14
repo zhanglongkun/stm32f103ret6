@@ -28,6 +28,15 @@ WIFI_INFO wifiInfo = {"JQM-201", "jqmkj123", 0, 0, 0, 0};
     
 SERVICE_INFO_8266 service = {"106.75.148.220", "6666"};
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_IO_Init()
+  * Description:  网络 IO 初始化
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_IO_Init(void)
 {
     GPIO_InitTypeDef gpioInitStruct;
@@ -73,6 +82,15 @@ void ESP8266_IO_Init(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_Init()
+  * Description:  ESP8266 初始化
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_Init(void)
 {
 	GPIO_InitTypeDef gpioInitStruct;
@@ -91,6 +109,15 @@ void ESP8266_Init(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_Device_InitStep()
+  * Description:  连接wifi、服务器
+  * Parameter:    void
+  * Return:       0 --成功，1 --失败
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 uint8 ESP8266_Device_InitStep(void)
 {
 	unsigned char errCount = 0;
@@ -178,26 +205,43 @@ uint8 ESP8266_Device_InitStep(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_Device_Init()
+  * Description:  网络初始化
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_Device_Init(void)
 {
     uint8 res = 1;
-    UsartPrintf(USART_DEBUG, "ffff\r\n");
-    ESP8266_DBG("111111");
+    ESP8266_DBG("复位");
     NET_DEVICE_Reset();
-    ESP8266_DBG("aaaaaaaaa");
+    ESP8266_DBG("");
     ESP8266_QuitTrans();	//退出透传模式
 
     while (res) {
-        ESP8266_DBG("vvvvvvvvvvvv");
+        ESP8266_DBG("");
         res = ESP8266_Device_InitStep();
     }
 
-    ESP8266_DBG("2222222222");
+    ESP8266_DBG("初始化成功");
     NET_DEVICE_SendData("hello", sizeof("hello"));
     OSTimeDly(500);
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_IO_WaitRecive()
+  * Description:  等待数据接收完成
+  * Parameter:    void
+  * Return:       0 --未接收到数据或者数据接收还未结束，1 --接收完成
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 uint8 ESP8266_IO_WaitRecive(void)
 {
     if(usart2IOInfo.dataLen == 0) //如果接收计数为0 则说明没有处于接收数据中，所以直接跳出，结束函数
@@ -216,6 +260,15 @@ uint8 ESP8266_IO_WaitRecive(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_Device_SendCmd()
+  * Description:  发送命令
+  * Parameter:    cmd --命令，res --要返回的数据，revBuf --接收到的数据
+  * Return:       返回值
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 uint8 ESP8266_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
 {
     unsigned char timeout = 300;
@@ -241,6 +294,15 @@ uint8 ESP8266_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_IO_ClearRecive()
+  * Description:  清除缓存
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_IO_ClearRecive(void)
 {
     usart2IOInfo.dataLen = 0;
@@ -249,6 +311,15 @@ void ESP8266_IO_ClearRecive(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_SendString()
+  * Description:  发送数据
+  * Parameter:    str --发送的数据，len --发送数据的大小
+  * Return:       返回值
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_SendString(unsigned char *str, unsigned char len)
 {
     unsigned short count = 0;
@@ -261,6 +332,15 @@ void ESP8266_SendString(unsigned char *str, unsigned char len)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_ReceiveString()
+  * Description:  接收服务器数据
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_ReceiveString(void)
 {
     unsigned char ret;
@@ -269,8 +349,7 @@ void ESP8266_ReceiveString(void)
 
     while (1) {
         memset(&revBuf, 0, sizeof(revBuf));
-//        NET_DEVICE_SendData("hello", sizeof("hello"));
-        ESP8266_DBG("tttttttttt.....");
+        ESP8266_DBG("等待接收中.....");
         ret = Net_Device_GetData(&revBuf);
         if (ret == 0) {
             UsartPrintf(USART_DEBUG, "%s", revBuf.buf);
@@ -281,6 +360,15 @@ void ESP8266_ReceiveString(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_QuitTrans()
+  * Description:  退出透传
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_QuitTrans(void)
 {
     USART_IO_INFO gsmRevBuf = {0};
@@ -301,6 +389,15 @@ void ESP8266_QuitTrans(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     ESP8266_EnterTrans()
+  * Description:  进入透传模式
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void ESP8266_EnterTrans(void)
 {
     USART_IO_INFO gsmRevBuf = {0};
@@ -315,9 +412,18 @@ void ESP8266_EnterTrans(void)
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     NET_DEVICE_Reset()
+  * Description:  设备复位
+  * Parameter:    void
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void NET_DEVICE_Reset(void)
 {
-#if(NET_DEVICE_MODE == 1)
+#if (NET_DEVICE_MODE == 1)
     ESP8266_QuitTrans();	//退出透传模式
     UsartPrintf(USART_DEBUG, "Tips:	QuitTrans\r\n");
 #endif
@@ -333,6 +439,15 @@ void NET_DEVICE_Reset(void)
 
 
 
+/**
+  ******************************************************************************
+  * Function:     NET_DEVICE_SendData()
+  * Description:  数据发送，如果发送失败，则重新连接服务器在发送
+  * Parameter:    data --发送的数据，len --数据的长度
+  * Return:       void
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 void NET_DEVICE_SendData(unsigned char *data, unsigned short len)
 {
 #if 0
@@ -341,12 +456,11 @@ void NET_DEVICE_SendData(unsigned char *data, unsigned short len)
 #endif
 
     USART_IO_INFO gsmRevBuf = {0};
-#if(NET_DEVICE_MODE == 1)
+#if (NET_DEVICE_MODE == 1)
     ESP8266_DBG("NET_DEVICE_SendData");
     ESP8266_SendString(data, len);  						//发送设备连接请求数据
 #else
     char cmdBuf[32];
-    ESP8266_DBG("344");
 
 AGAIN:
     OSTimeDly(10);								//等待一下
@@ -358,14 +472,6 @@ AGAIN:
         ESP8266_SendString(data, len);  					//发送设备连接请求数据
         ESP8266_DBG("send success");
     } else {
-    
-#if 0
-        ESP8266_Device_SendCmd("AT+CIPCLOSE\r\n", "OK", &gsmRevBuf);
-
-        ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf);
-#endif
-
-#if 1
         ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
         ESP8266_DBG("connect again");
         if (!NET_DEVICE_ReLink()) {
@@ -373,27 +479,28 @@ AGAIN:
         } else {
             ESP8266_DBG("reconnect server failed");
         }
-#endif
     }
 #endif
-
     return;
 }
 
 
+/**
+  ******************************************************************************
+  * Function:     NET_DEVICE_ReLink()
+  * Description:  重新连接服务器，最多尝试连接10次
+  * Parameter:    void
+  * Return:       0 --成功，1 --失败
+  * Others:       add by zlk, 2017-07-14
+  ******************************************************************************
+  */ 
 uint8 NET_DEVICE_ReLink(void)
 {
     USART_IO_INFO gsmRevBuf = {0};
     char cfgBuffer[32] = {0};
 	unsigned char errCount = 0;
     
-#if 0
-    ESP8266_Device_SendCmd("AT+CIPCLOSE\r\n", "OK", &gsmRevBuf);
-    
-    ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf);
-#endif
-#if 1
-#if(NET_DEVICE_MODE == 1)
+#if (NET_DEVICE_MODE == 1)
     ESP8266_QuitTrans();    //退出透传模式
     UsartPrintf(USART_DEBUG, "Tips: QuitTrans\r\n");
 #endif
@@ -434,15 +541,13 @@ uint8 NET_DEVICE_ReLink(void)
     }
 
     if(errCount != 10) {
-#if(NET_DEVICE_MODE == 1)
+#if (NET_DEVICE_MODE == 1)
         ESP8266_EnterTrans();
 #else
         ESP8266_DBG("连接成功");
-        ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
         return 0;
     }
 #endif
     return 1;
-#endif
 }
 
