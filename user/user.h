@@ -59,9 +59,9 @@ uint8 Heart_Data_Send(void);
 
 void Data_Receive(void);
 
-void Net_Device_SendData(unsigned char *data, unsigned short len);
+uint8 Net_Device_SendData(unsigned char *data, unsigned short len);
 
-uint8 Net_Device_GetData(uint8 *revBuf);
+uint8 Net_Device_GetData(USART_IO_INFO *revBuf);
 
 void Net_Connect(void);
 

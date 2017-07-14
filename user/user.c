@@ -37,10 +37,17 @@ uint8 Heart_Data_Send(void)
     uint8 ret;
     uint8 heartBuf[] = "heart data";
     uint8 sCount = 5;
-    uint8 *revBuf = NULL;
+    USART_IO_INFO *revBuf = NULL;
     uint8 status;
 
+    revBuf = (USART_IO_INFO *) malloc(sizeof(USART_IO_INFO));
+    if (NULL == revBuf) {
+        USER_DBG("malloc error");
+        return 1;
+    }
+
     while (1) {
+        memset(revBuf, 0, sizeof(USART_IO_INFO));
         if ((NETWORK_OK != netWorkInfo.netWork) || (DEVICE_DATA_MODE != deviceDataType.dataType)) {
             USER_DBG("not in device_data_mode");
             return 1;
@@ -76,7 +83,8 @@ uint8 Heart_Data_Send(void)
 
         OSTimeDlyHMSM(0, 0, 20, 0);
     }
-    
+
+    free(revBuf);
     return 0;
 }
 
@@ -92,9 +100,16 @@ uint8 Heart_Data_Send(void)
   */ 
 void Data_Receive(void)
 {
-    uint8 *revBuf = NULL;
+    USART_IO_INFO *revBuf = NULL;
+
+    revBuf = (USART_IO_INFO *) malloc(sizeof(USART_IO_INFO));
+    if (NULL == revBuf) {
+        USER_DBG("malloc error");
+        return;
+    }
     
     while (1) {
+        memset(revBuf, 0, sizeof(USART_IO_INFO));
         if ((NETWORK_OK == netWorkInfo.netWork) || (DEVICE_DATA_MODE == deviceDataType.dataType)) {
             Net_Device_GetData(revBuf);
             if (NULL != revBuf) {
@@ -102,6 +117,8 @@ void Data_Receive(void)
             }
         }
     }
+
+    free(revBuf);
 }
 
 
@@ -114,7 +131,7 @@ void Data_Receive(void)
   * Others:       add by zlk, 2017-06-15
   ******************************************************************************
   */ 
-void Net_Device_SendData(unsigned char *data, unsigned short len)
+uint8 Net_Device_SendData(unsigned char *data, unsigned short len)
 {
 #if(NET_DEVICE_TRANS == 1)
     GSM_SendString(data, len);  //发送设备连接请求数据
@@ -149,16 +166,13 @@ void Net_Device_SendData(unsigned char *data, unsigned short len)
   * Others:       add by zlk, 2017-06-16
   ******************************************************************************
   */ 
-uint8 Net_Device_GetData(uint8 *revBuf)
+uint8 Net_Device_GetData(USART_IO_INFO *revBuf)
 {
     uint16 count = 200;
-    uint8 *buffer = NULL;
     
     while (count--) {
         if(Usart2_IO_WaitRecive() == REV_OK) {
-            buffer = (uint8 *) malloc(usart2IOInfo.dataLenPre);
-            memset(buffer, 0, sizeof(USART_IO_INFO));
-            memcpy(buffer, usart2IOInfo.buf, sizeof(usart2IOInfo.buf));
+            memcpy(revBuf, &usart2IOInfo, sizeof(usart2IOInfo));
             
             memset(&usart2IOInfo, 0, sizeof(USART_IO_INFO));
         }
@@ -168,7 +182,6 @@ uint8 Net_Device_GetData(uint8 *revBuf)
         return 1;
     }
     
-    revBuf = buffer;
     return 0;
 }
 
@@ -251,12 +264,19 @@ void Data_Process(void)
     uint8 ret;
     uint8 sendBuf[] = "I receive the data";
     USART_IO_INFO *revBuf = NULL;
+
+    revBuf = (USART_IO_INFO *) malloc(sizeof(USART_IO_INFO));
+    if (NULL == revBuf) {
+        USER_DBG("malloc error");
+        return;
+    }
     
     while (1) {
+        memset(revBuf, 0, sizeof(USART_IO_INFO));
         if ((NETWORK_OK== netWorkInfo.netWork) && (DEVICE_DATA_MODE == deviceDataType.dataType)) {
             memset(&revBuf, 0, sizeof(USART_IO_INFO));
             
-            ret = Net_Device_GetData((uint8 *)revBuf);
+            ret = Net_Device_GetData(revBuf);
             if (0 != revBuf) {
                 USER_DBG("receive buffer = %s", revBuf->buf);
                 Net_Device_SendData(sendBuf, sizeof(sendBuf));
@@ -265,6 +285,8 @@ void Data_Process(void)
 
         OSTimeDly(2);
     }
+
+    free(revBuf);
 }
 
 

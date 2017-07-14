@@ -13,12 +13,16 @@
 #define _ESP8266_H_
 
 #include <stdio.h>
+#include <string.h>
 
 //单片机头文件
 #include "stm32f10x.h"
 
 #include "usart.h"
 
+#include "includes.h"
+
+#define NET_DEVICE_MODE 0   //0--不透传，1--透传
 
 #define ESP8266_IO USART2
 
@@ -26,7 +30,7 @@ typedef struct
 {
     char ip[16];
     char port[8];
-} SERVICE_INFO;
+} SERVICE_INFO_8266;
 
 
 typedef unsigned char uint8;
@@ -58,13 +62,13 @@ typedef enum
     ESP8266_AT_CIPSTART
 } esp8266_init_step;
 
-void ESP8266_IO_Init();
+void ESP8266_IO_Init(void);
 
-void ESP8266_Init();
+void ESP8266_Init(void);
 
-uint8 ESP8266_Device_InitStep();
+uint8 ESP8266_Device_InitStep(void);
 
-void ESP8266_Device_Init();
+void ESP8266_Device_Init(void);
 
 uint8 ESP8266_IO_WaitRecive(void);
 
@@ -73,12 +77,17 @@ uint8 ESP8266_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf);
 void ESP8266_IO_ClearRecive(void);
 
 void ESP8266_SendString(unsigned char *str, unsigned char len);
-
+void ESP8266_ReceiveString(void);
 void ESP8266_QuitTrans(void);
 
 void ESP8266_EnterTrans(void);
 
 void NET_DEVICE_Reset(void);
+
+void NET_DEVICE_SendData(unsigned char *data, unsigned short len);
+
+uint8 NET_DEVICE_ReLink(void);
+
 
 #endif  /* _ESP8266_H_ */
 

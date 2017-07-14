@@ -1,11 +1,5 @@
----- GSM_SendString Matches (10 in 4 files) ----
-sim808.c (Y:\stm32f103ret6\hardware\src):void GSM_SendString(unsigned char *str, unsigned char len)
-sim808.c (Y:\stm32f103ret6\hardware\src):    GSM_SendString(GSM_IO, (uint8 *)cmd, strlen((uint8 *)cmd));
-sim808.h (Y:\stm32f103ret6\hardware\inc):void GSM_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned char len);
-stmf10x-demo.build_log.htm (Y:\stm32f103ret6\output):      GSM_SendString(GSM_IO, (uint8 *)cmd, strlen((uint8 *)cmd));
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<BR><BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GSM_SendString
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<BR><BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GSM_SendString
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<P><STRONG><a name="[f1]"></a>GSM_SendString</STRONG> (Thumb, 50 bytes, Stack size 24 bytes, sim808.o(.text))
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = GSM_SendString
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = GSM_Device_SendCmd &rArr; GSM_SendString
-stmf10x-demo.htm (Y:\stm32f103ret6\output):<BR>[Calls]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GSM_SendString
+---- TIM6_IRQN Matches (4 in 2 files) ----
+hwtimer.c (Y:\stm32f103ret6\hardware\src):        nvicInitStruct.NVIC_IRQChannel = TIM6_IRQn;
+stm32f10x.h (Y:\stm32f103ret6\core):  TIM6_IRQn                   = 54,     /*!< TIM6 global Interrupt                                */
+stm32f10x.h (Y:\stm32f103ret6\core):  TIM6_IRQn                   = 54,     /*!< TIM6 global Interrupt                                */
+stm32f10x.h (Y:\stm32f103ret6\core):  TIM6_IRQn                   = 54,     /*!< TIM6 global Interrupt                                */

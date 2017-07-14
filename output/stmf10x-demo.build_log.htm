@@ -4,37 +4,199 @@
 <h1>礦ision Build Log</h1>
 <h2>Project:</h2>
 Y:\stm32f103ret6\stmf10x-demo.uvproj
-Project File Date:  06/15/2017
+Project File Date:  06/28/2017
 
 <h2>Output:</h2>
 Build target 'stm32f103ret'
-compiling main.c...
-user\main.c(100): warning:  #223-D: function "RTOS_TimerInit" declared implicitly
-      RTOS_TimerInit();
-user\main.c(113): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "void (*)(void *)"
-      OSTaskCreateExt(Net_Task, (void *)0, &NET_TASK_STK[NET_STK_SIZE - 1], CHECKTASK_TASK_PRIO,
-user\main.c(116): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "void (*)(void *)"
-      OSTaskCreateExt(Head_Task, (void *)0, &HEART_TASK_STK[HEART_STK_SIZE - 1], HEART_TASK_PRIO,
-user\main.c(119): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "void (*)(void *)"
-      OSTaskCreateExt(Data_Task, (void *)0, &DATA_TASK_STK[DATA_STK_SIZE - 1], DATA_TASK_PRIO,
-user\main.c(49): warning:  #177-D: function "Check_Stack_Task" was declared but never referenced
-  static void Check_Stack_Task()
-user\main.c: 5 warnings, 0 errors
+compiling user.c...
+user\user.c(87): warning:  #111-D: statement is unreachable
+      free(revBuf);
+user\user.c(121): warning:  #111-D: statement is unreachable
+      free(revBuf);
+user\user.c(157): warning:  #940-D: missing return statement at end of non-void function "Net_Device_SendData"
+  }
+user\user.c(289): warning:  #111-D: statement is unreachable
+      free(revBuf);
+user\user.c(264): warning:  #550-D: variable "ret" was set but never used
+      uint8 ret;
+user\user.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=35324 RO-data=1220 RW-data=184 ZI-data=13736  
+Program Size: Code=38320 RO-data=1320 RW-data=252 ZI-data=17836  
 FromELF: creating hex file...
 ".\output\stmf10x-demo.axf" - 0 Error(s), 5 Warning(s).
-ata=9640  
-FromELF: creating hex file...
-".\output\stmf10x-demo.axf" - 0 Error(s), 8 Warning(s).
-r
-      }
-user\user.c(256): error:  #65: expected a ";"
-      }
-user\user.c(241): warning:  #177-D: variable "ret" was declared but never referenced
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+er\user.c(152): warning:  #940-D: missing return statement at end of non-void function "Net_Device_SendData"
+  }
+user\user.c(263): warning:  #223-D: function "mallco" declared implicitly
+      revBuf = (USART_IO_INFO *) mallco(sizeof(USART_IO_INFO));
+user\user.c(259): warning:  #550-D: variable "ret" was set but never used
       uint8 ret;
-user\user.c(242): warning:  #177-D: variable "sendBuf" was declared but never referenced
-      uint8 sendBuf[] = "I receive the data";
-user\user.c: 6 warnings, 3 errors
-".\output\stmf10x-demo.axf" - 3 Error(s), 9 Warning(s).
+user\user.c: 6 warnings, 0 errors
+linking...
+.\output\stmf10x-demo.axf: Error: L6218E: Undefined symbol mallco (referred from user.o).
+Not enough information to list image symbols.
+Finished: 1 information, 0 warning and 1 error messages.
+".\output\stmf10x-demo.axf" - 1 Error(s), 8 Warning(s).
 Target not created
+ *" is incompatible with parameter of type "const char *"
+      ESP8266_SendString((uint8 *)cmd, strlen((uint8 *)cmd));
+hardware\src\esp8266.c(235): warning:  #223-D: function "DelayUs" declared implicitly
+          DelayUs(200);
+hardware\src\esp8266.c(274): warning:  #223-D: function "Net_Device_GetData" declared implicitly
+          ret = Net_Device_GetData(&revBuf);
+hardware\src\esp8266.c(267): warning:  #177-D: variable "i" was declared but never referenced
+      int i = 0;
+hardware\src\esp8266.c: 5 warnings, 0 errors
+compiling sim808.c...
+hardware\src\sim808.c(354): warning:  #188-D: enumerated type mixed with another type
+      sim_status res = 1;
+hardware\src\sim808.c(358): warning:  #223-D: function "DelayMs" declared implicitly
+          DelayMs(1000);
+hardware\src\sim808.c(441): warning:  #69-D: integer conversion resulted in truncation
+      unsigned char timeout = 300;
+hardware\src\sim808.c(443): warning:  #167-D: argument of type "uint8 *" is incompatible with parameter of type "const char *"
+      GSM_SendString((uint8 *)cmd, strlen((uint8 *)cmd));
+hardware\src\sim808.c(455): warning:  #223-D: function "DelayUs" declared implicitly
+          DelayUs(200);
+hardware\src\sim808.c: 5 warnings, 0 errors
+compiling main.c...
+user\main.c(133): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "void (*)(void *)"
+      OSTaskCreateExt(ESP8266_ReceiveBuf_Task, (void *)0, &DATA_TASK_STK[DATA_STK_SIZE - 1], DATA_TASK_PRIO,
+user\main.c(55): warning:  #177-D: function "Check_Stack_Task" was declared but never referenced
+  static void Check_Stack_Task()
+user\main.c: 2 warnings, 0 errors
+compiling user.c...
+user\user.c(43): warning:  #223-D: function "mallco" declared implicitly
+      revBuf = (USART_IO_INFO *) mallco(sizeof(USART_IO_INFO));
+user\user.c(62): error:  #167: argument of type "USART_IO_INFO *" is incompatible with parameter of type "uint8 *"
+              ret = Net_Device_GetData(revBuf);
+user\user.c(86): warning:  #111-D: statement is unreachable
+      return 0;
+user\user.c(103): warning:  #223-D: function "mallco" declared implicitly
+      revBuf = (USART_IO_INFO *) mallco(sizeof(USART_IO_INFO));
+user\user.c(106): error:  #118: a void function may not return a value
+          return 1;
+user\user.c(111): error:  #167: argument of type "USART_IO_INFO *" is incompatible with parameter of type "uint8 *"
+              Net_Device_GetData(revBuf);
+user\user.c(152): warning:  #940-D: missing return statement at end of non-void function "Net_Device_SendData"
+  }
+user\user.c(164): error:  #147-D: declaration is incompatible with "uint8 Net_Device_GetData(uint8 *)" (declared at line 64 of "user\user.h")
+  uint8 Net_Device_GetData(USART_IO_INFO *revBuf)
+user\user.c(170): error:  #167: argument of type "USART_IO_INFO" is incompatible with parameter of type "const void *restrict"
+              memcpy(revBuf, usart2IOInfo, sizeof(usart2IOInfo));
+user\user.c(263): warning:  #223-D: function "mallco" declared implicitly
+      revBuf = (USART_IO_INFO *) mallco(sizeof(USART_IO_INFO));
+user\user.c(266): error:  #118: a void function may not return a value
+          return 1;
+user\user.c(259): warning:  #550-D: variable "ret" was set but never used
+      uint8 ret;
+user\user.c: 6 warnings, 6 errors
+compiling os_cpu_c.c...
+assembling os_cpu_a.asm...
+compiling os_core.c...
+compiling os_flag.c...
+compiling os_mbox.c...
+compiling os_mem.c...
+compiling os_mutex.c...
+compiling os_q.c...
+compiling os_sem.c...
+compiling os_task.c...
+compiling os_time.c...
+compiling os_tmr.c...
+".\output\stmf10x-demo.axf" - 6 Error(s), 19 Warning(s).
+Target not created
+sp8266.c(415): error:  #92: identifier-list parameters may only be used in a function definition
+      strcat(cfgBuffer, "\",");
+hardware\src\esp8266.c(415): error:  #147: declaration is incompatible with "char *strcat(char *restrict, const char *restrict)" (declared at line 85 of "d:\Keil_v5\ARM\ARMCC\bin\..\include\string.h")
+      strcat(cfgBuffer, "\",");
+hardware\src\esp8266.c(416): error:  #18: expected a ")"
+      strncat(cfgBuffer, service.port, 4);
+hardware\src\esp8266.c(416): warning:  #77-D: this declaration has no storage class or type specifier
+      strncat(cfgBuffer, service.port, 4);
+hardware\src\esp8266.c(416): error:  #92: identifier-list parameters may only be used in a function definition
+      strncat(cfgBuffer, service.port, 4);
+hardware\src\esp8266.c(417): error:  #40: expected an identifier
+      strcat(cfgBuffer, "\r\n");
+hardware\src\esp8266.c(417): warning:  #77-D: this declaration has no storage class or type specifier
+      strcat(cfgBuffer, "\r\n");
+hardware\src\esp8266.c(417): error:  #92: identifier-list parameters may only be used in a function definition
+      strcat(cfgBuffer, "\r\n");
+hardware\src\esp8266.c(420): error:  #79: expected a type specifier
+      UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+hardware\src\esp8266.c(420): error:  #79: expected a type specifier
+      UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+hardware\src\esp8266.c(420): error:  #20: identifier "cfgBuffer" is undefined
+      UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+hardware\src\esp8266.c(420): warning:  #77-D: this declaration has no storage class or type specifier
+      UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+hardware\src\esp8266.c(420): error:  #147: declaration is incompatible with "void UsartPrintf(USART_TypeDef *, char *, ...)" (declared at line 41 of ".\hardware\inc\usart.h")
+      UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+hardware\src\esp8266.c(423): error:  #169: expected a declaration
+      while(ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf))              //连接平台，检索“CONNECT”，如果失败会进入循环体
+hardware\src\esp8266.c(447): warning:  #12-D: parsing restarts here after previous syntax error
+      return 1;
+hardware\src\esp8266.c(449): error:  #169: expected a declaration
+  }
+hardware\src\esp8266.c: 17 warnings, 27 errors
+compiling sim808.c...
+hardware\src\sim808.c(354): warning:  #188-D: enumerated type mixed with another type
+      sim_status res = 1;
+hardware\src\sim808.c(358): warning:  #223-D: function "DelayMs" declared implicitly
+          DelayMs(1000);
+hardware\src\sim808.c(441): warning:  #69-D: integer conversion resulted in truncation
+      unsigned char timeout = 300;
+hardware\src\sim808.c(443): warning:  #167-D: argument of type "uint8 *" is incompatible with parameter of type "const char *"
+      GSM_SendString((uint8 *)cmd, strlen((uint8 *)cmd));
+hardware\src\sim808.c(455): warning:  #223-D: function "DelayUs" declared implicitly
+          DelayUs(200);
+hardware\src\sim808.c: 5 warnings, 0 errors
+compiling main.c...
+user\main.c(133): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "void (*)(void *)"
+      OSTaskCreateExt(ESP8266_ReceiveBuf_Task, (void *)0, &DATA_TASK_STK[DATA_STK_SIZE - 1], DATA_TASK_PRIO,
+user\main.c(55): warning:  #177-D: function "Check_Stack_Task" was declared but never referenced
+  static void Check_Stack_Task()
+user\main.c: 2 warnings, 0 errors
+compiling user.c...
+user\user.c(80): warning:  #111-D: statement is unreachable
+      return 0;
+user\user.c(140): warning:  #940-D: missing return statement at end of non-void function "Net_Device_SendData"
+  }
+user\user.c(152): warning:  #550-D: parameter "revBuf" was set but never used
+  uint8 Net_Device_GetData(uint8 *revBuf)
+user\user.c(251): warning:  #550-D: variable "ret" was set but never used
+      uint8 ret;
+user\user.c: 4 warnings, 0 errors
+compiling os_cpu_c.c...
+assembling os_cpu_a.asm...
+compiling os_core.c...
+compiling os_flag.c...
+compiling os_mbox.c...
+compiling os_mem.c...
+compiling os_mutex.c...
+compiling os_q.c...
+compiling os_sem.c...
+compiling os_task.c...
+compiling os_time.c...
+compiling os_tmr.c...
+".\output\stmf10x-demo.axf" - 27 Error(s), 29 Warning(s).
+Target not created
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+_____^
+*** error 56: cannot open file
+Error: Flash Download failed  -  Could not load file 'Y:\stm32f103ret6\output\stmf10x-demo.axf'
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+_____^
+*** error 56: cannot open file
+Error: Flash Download failed  -  Could not load file 'Y:\stm32f103ret6\output\stmf10x-demo.axf'
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+_____^
+*** error 56: cannot open file
+Error: Flash Download failed  -  Could not load file 'Y:\stm32f103ret6\output\stmf10x-demo.axf'
+Load "Y:\\stm32f103ret6\\output\\stmf10x-demo.axf" 
+_____^
+*** error 56: cannot open file
+Error: Flash Download failed  -  Could not load file 'Y:\stm32f103ret6\output\stmf10x-demo.axf'

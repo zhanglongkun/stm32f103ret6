@@ -26,9 +26,9 @@
 
 WIFI_INFO wifiInfo = {"JQM-201", "jqmkj123", 0, 0, 0, 0};
     
-SERVICE_INFO serviceInfo = {"183.230.40.39", "876"};
+SERVICE_INFO_8266 service = {"106.75.148.220", "6666"};
 
-void ESP8266_IO_Init()
+void ESP8266_IO_Init(void)
 {
     GPIO_InitTypeDef gpioInitStruct;
     USART_InitTypeDef usartInitStruct;
@@ -67,13 +67,13 @@ void ESP8266_IO_Init()
     nvicInitStruct.NVIC_IRQChannelSubPriority = 0;
     NVIC_Init(&nvicInitStruct);
 
-    GSM_IO_ClearRecive();
+    ESP8266_IO_ClearRecive();
     
     return;
 }
 
 
-void ESP8266_Init()
+void ESP8266_Init(void)
 {
 	GPIO_InitTypeDef gpioInitStruct;
 	
@@ -91,7 +91,7 @@ void ESP8266_Init()
 }
 
 
-uint8 ESP8266_Device_InitStep()
+uint8 ESP8266_Device_InitStep(void)
 {
 	unsigned char errCount = 0;
     USART_IO_INFO gsmRevBuf = {0};
@@ -99,49 +99,102 @@ uint8 ESP8266_Device_InitStep()
     
     switch (wifiInfo.initStep) {
         case 0:
+            UsartPrintf(USART_DEBUG, "STA Tips:	AT+CWMODE=1\r\n");
+            if(!ESP8266_Device_SendCmd("AT+CWMODE=1\r\n", "OK", &gsmRevBuf)) 										//station模式
+                wifiInfo.initStep++;
+
+            break;
+
+        case 1:
+            UsartPrintf(USART_DEBUG, "STA Tips:	AT+CIPMODE=0\r\n");
+            if(!ESP8266_Device_SendCmd("AT+CIPMODE=0\r\n", "OK", &gsmRevBuf)) 										//关闭透传模式---指令模式
+                wifiInfo.initStep++;
+            break;
+        
+        case 2:
+            if (!ESP8266_Device_SendCmd("AT+CWJAP=\"JQM-201\",\"jqmkj123\"\r\n", "GOT IP", &gsmRevBuf)) {
+                wifiInfo.initStep++;
+            }
+            
+            OSTimeDly(100);
+            ESP8266_DBG("000000000, buffer = %s", gsmRevBuf.buf);
+            
+            wifiInfo.initStep++;
+            break;
+            
+        case 3:
 
             memset(cfgBuffer, 0, sizeof(cfgBuffer));
 
             strcpy(cfgBuffer, "AT+CIPSTART=\"TCP\",\"");
-            strcat(cfgBuffer, serviceInfo.ip);
+            strcat(cfgBuffer, service.ip);
             strcat(cfgBuffer, "\",");
-            strcat(cfgBuffer, serviceInfo.port);
+            strcat(cfgBuffer, service.port);
             strcat(cfgBuffer, "\r\n");
             UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
 
             while(ESP8266_Device_SendCmd(cfgBuffer, "CONNECT", &gsmRevBuf))              //连接平台，检索“CONNECT”，如果失败会进入循环体
             {
-                Led7_Set(LED_ON);
-                OSTimeDly(100);
-
-                Led7_Set(LED_OFF);
-                OSTimeDly(100);
+                ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+                
+                OSTimeDly(1000);
 
                 if(++errCount >= 10)
                 {
                     UsartPrintf(USART_DEBUG, "PT info Error,Use APP -> 8266\r\n");
                     break;
                 }
+
+                memset(&gsmRevBuf, 0, sizeof(USART_IO_INFO));
             }
 
-            if(errCount != 10)
-            wifiInfo.initStep++;
-
+                if(errCount != 10) {
+#if(NET_DEVICE_MODE == 1)
+                    ESP8266_EnterTrans();
+#else
+                    wifiInfo.initStep++;
+                    ESP8266_DBG("连接成功");
+                    ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+#if 0
+                    memset(&gsmRevBuf, 0, sizeof(USART_IO_INFO));
+                    if (!ESP8266_Device_SendCmd("AT+CIPSTATUS\r\n", "CONNECT OK", &gsmRevBuf)) {
+                        ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+                    }
+                    ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+                    
+//                    ESP8266_EnterTrans();
+#endif
+                    return 0;
+#endif
+                }
+        
             break;
 
         default:
+            break;
             
     }
+    return 1;
 }
 
 
-void ESP8266_Device_Init()
+void ESP8266_Device_Init(void)
 {
     uint8 res = 1;
+    UsartPrintf(USART_DEBUG, "ffff\r\n");
+    ESP8266_DBG("111111");
+    NET_DEVICE_Reset();
+    ESP8266_DBG("aaaaaaaaa");
+    ESP8266_QuitTrans();	//退出透传模式
 
     while (res) {
+        ESP8266_DBG("vvvvvvvvvvvv");
         res = ESP8266_Device_InitStep();
     }
+
+    ESP8266_DBG("2222222222");
+    NET_DEVICE_SendData("hello", sizeof("hello"));
+    OSTimeDly(500);
 }
 
 
@@ -182,7 +235,7 @@ uint8 ESP8266_Device_SendCmd(char *cmd, char *res, USART_IO_INFO *revBuf)
         DelayUs(200);
     }
     
-    GSM_IO_ClearRecive();
+    ESP8266_IO_ClearRecive();
 
     return 1;
 }
@@ -204,6 +257,26 @@ void ESP8266_SendString(unsigned char *str, unsigned char len)
     {
         USART_SendData(ESP8266_IO, *str++);									//发送数据
         while(USART_GetFlagStatus(ESP8266_IO, USART_FLAG_TC) == RESET);		//等待发送完成
+    }
+}
+
+
+void ESP8266_ReceiveString(void)
+{
+    unsigned char ret;
+    int i = 0;
+    USART_IO_INFO revBuf;
+
+    while (1) {
+        memset(&revBuf, 0, sizeof(revBuf));
+//        NET_DEVICE_SendData("hello", sizeof("hello"));
+        ESP8266_DBG("tttttttttt.....");
+        ret = Net_Device_GetData(&revBuf);
+        if (ret == 0) {
+            UsartPrintf(USART_DEBUG, "%s", revBuf.buf);
+        }
+        
+        OSTimeDly(10);
     }
 }
 
@@ -244,7 +317,7 @@ void ESP8266_EnterTrans(void)
 
 void NET_DEVICE_Reset(void)
 {
-#if(NET_DEVICE_TRANS == 1)
+#if(NET_DEVICE_MODE == 1)
     ESP8266_QuitTrans();	//退出透传模式
     UsartPrintf(USART_DEBUG, "Tips:	QuitTrans\r\n");
 #endif
@@ -256,5 +329,120 @@ void NET_DEVICE_Reset(void)
 
     NET_DEVICE_RST_OFF;		//结束复位
     OSTimeDly(200);
+}
+
+
+
+void NET_DEVICE_SendData(unsigned char *data, unsigned short len)
+{
+#if 0
+    ESP8266_DBG("NET_DEVICE_SendData");
+    ESP8266_SendString(data, len);  						//发送设备连接请求数据
+#endif
+
+    USART_IO_INFO gsmRevBuf = {0};
+#if(NET_DEVICE_MODE == 1)
+    ESP8266_DBG("NET_DEVICE_SendData");
+    ESP8266_SendString(data, len);  						//发送设备连接请求数据
+#else
+    char cmdBuf[32];
+    ESP8266_DBG("344");
+
+AGAIN:
+    OSTimeDly(10);								//等待一下
+
+    ESP8266_IO_ClearRecive();							//清空接收缓存
+    sprintf(cmdBuf, "AT+CIPSEND=%d\r\n", len);		//发送命令
+    if(!ESP8266_Device_SendCmd(cmdBuf, ">", &gsmRevBuf))			//收到‘>’时可以发送数据
+    {
+        ESP8266_SendString(data, len);  					//发送设备连接请求数据
+        ESP8266_DBG("send success");
+    } else {
+    
+#if 0
+        ESP8266_Device_SendCmd("AT+CIPCLOSE\r\n", "OK", &gsmRevBuf);
+
+        ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf);
+#endif
+
+#if 1
+        ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+        ESP8266_DBG("connect again");
+        if (!NET_DEVICE_ReLink()) {
+            goto AGAIN;
+        } else {
+            ESP8266_DBG("reconnect server failed");
+        }
+#endif
+    }
+#endif
+
+    return;
+}
+
+
+uint8 NET_DEVICE_ReLink(void)
+{
+    USART_IO_INFO gsmRevBuf = {0};
+    char cfgBuffer[32] = {0};
+	unsigned char errCount = 0;
+    
+#if 0
+    ESP8266_Device_SendCmd("AT+CIPCLOSE\r\n", "OK", &gsmRevBuf);
+    
+    ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf);
+#endif
+#if 1
+#if(NET_DEVICE_MODE == 1)
+    ESP8266_QuitTrans();    //退出透传模式
+    UsartPrintf(USART_DEBUG, "Tips: QuitTrans\r\n");
+#endif
+    
+    //连接前先关闭一次
+    if (ESP8266_Device_SendCmd("AT+CIPCLOSE\r\n", "OK", &gsmRevBuf)) {
+        ESP8266_DBG("close error, buffer = %s", gsmRevBuf.buf);
+//        return 1;
+    }
+    
+    OSTimeDly(500);
+    
+    memset(cfgBuffer, 0, sizeof(cfgBuffer));
+
+    strcpy(cfgBuffer, "AT+CIPSTART=\"TCP\",\"");
+    strncat(cfgBuffer, service.ip, 15);
+    strcat(cfgBuffer, "\",");
+    strncat(cfgBuffer, service.port, 4);
+    strcat(cfgBuffer, "\r\n");
+    
+//    sprintf(cfgBuffer, "AT+CIPSTART=\"TCP\",\"%s\",%s\r\n", service.ip, service.port);
+    UsartPrintf(USART_DEBUG, "STA Tips: %s", cfgBuffer);
+
+//    while(ESP8266_Device_SendCmd((char *)cfgBuffer, "CONNECT", &gsmRevBuf))              //连接平台，检索“CONNECT”，如果失败会进入循环体
+    while(ESP8266_Device_SendCmd("AT+CIPSTART=\"TCP\",\"106.75.148.220\",6666\r\n", "CONNECT", &gsmRevBuf))              //连接平台，检索“CONNECT”，如果失败会进入循环体
+    {
+        ESP8266_DBG("connect server error, buffer = %s", &gsmRevBuf.buf);
+        
+        OSTimeDly(200);
+
+        if(++errCount >= 10)
+        {
+            UsartPrintf(USART_DEBUG, "PT info Error,Use APP -> 8266\r\n");
+            break;
+        }
+
+        memset(&gsmRevBuf, 0, sizeof(USART_IO_INFO));
+    }
+
+    if(errCount != 10) {
+#if(NET_DEVICE_MODE == 1)
+        ESP8266_EnterTrans();
+#else
+        ESP8266_DBG("连接成功");
+        ESP8266_DBG("buffer = %s", gsmRevBuf.buf);
+        return 0;
+    }
+#endif
+    return 1;
+#endif
 }
 

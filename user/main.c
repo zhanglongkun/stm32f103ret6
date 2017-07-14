@@ -11,6 +11,8 @@
 #include "i2c.h"
 #include "adxl345.h"
 #include "sim808.h"
+#include "esp8266.h"
+#include "hwtimer.h"
 
 //os
 #include "includes.h"
@@ -44,6 +46,10 @@ OS_STK HEART_TASK_STK[HEART_STK_SIZE];
 #define DATA_STK_SIZE        1024
 OS_STK DATA_TASK_STK[DATA_STK_SIZE];
 
+//ESP8266任务
+#define ESP8266_TASK_PRIO       12
+#define ESP8266_STK_SIZE        1024
+OS_STK ESP8266_TASK_STK[ESP8266_STK_SIZE];
 
 
 static void Check_Stack_Task()
@@ -78,6 +84,16 @@ void Data_Task()
     Data_Process();
 }
 
+void ESP8266_Init_Task()
+{
+    ESP8266_Device_Init();
+}
+
+void ESP8266_ReceiveBuf_Task()
+{
+    ESP8266_Device_Init();
+    ESP8266_ReceiveString();
+}
 
 void Hardware_Init(void)
 {
@@ -93,7 +109,7 @@ void Hardware_Init(void)
 
     Usart1_Init(115200);
     
-    GSM_Init();
+    ESP8266_Init();
 
     IIC_Init();
 
@@ -106,10 +122,21 @@ void Hardware_Init(void)
 int main(void)
 {
     Hardware_Init();											//硬件初始化
-
-    GSM_Device_Init();
+    OSInit();
 
     
+#if 0
+    OSTaskCreateExt(ESP8266_ReceiveBuf_Task, (void *)0, &ESP8266_TASK_STK[ESP8266_STK_SIZE - 1], ESP8266_TASK_PRIO,
+                    ESP8266_TASK_PRIO, &NET_TASK_STK[0], ESP8266_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
+#endif
+
+    OSTaskCreateExt(ESP8266_ReceiveBuf_Task, (void *)0, &DATA_TASK_STK[DATA_STK_SIZE - 1], DATA_TASK_PRIO,
+                    DATA_TASK_PRIO, &DATA_TASK_STK[0], DATA_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
+
+    OSStart();
+
+    
+#if 0
     OSTaskCreateExt(Net_Task, (void *)0, &NET_TASK_STK[NET_STK_SIZE - 1], CHECKTASK_TASK_PRIO,
                     CHECKTASK_TASK_PRIO, &NET_TASK_STK[0], NET_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
 
@@ -119,6 +146,7 @@ int main(void)
     OSTaskCreateExt(Data_Task, (void *)0, &DATA_TASK_STK[DATA_STK_SIZE - 1], DATA_TASK_PRIO,
                     DATA_TASK_PRIO, &DATA_TASK_STK[0], DATA_STK_SIZE, NULL, OS_TASK_OPT_STK_CLR | OS_TASK_OPT_STK_CHK);
 
+#endif
 
     
 #if 0
